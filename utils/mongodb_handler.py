@@ -72,4 +72,6 @@ class MongoDB(object):
             from pymongo.read_preferences import ReadPreference
             # self.__db_connection = Database(Connection(self.host, self.port), self.db)
             self.__db_connection = Database(Connection(self.host, self.port), self.db)#replicaSet='', read_preference=ReadPreference.SECONDARY_PREFERRED), self.db)
+            self.__db_connection.authenticate(self.db, self.pwd)
+
         return self.__db_connection
