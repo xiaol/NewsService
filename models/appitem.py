@@ -15,6 +15,7 @@ class AppItem(object):
     author = None
     content_html = None  # 文章原始内容
 
+    insert_time = None
     summary = None  # 摘要 str
     love = None  # 喜爱 int
     up = None  # 顶 int
@@ -51,6 +52,7 @@ class AppItem(object):
         if param_dict['published_date'] > time.time() + 24*60*60:
             self.status = 2
         self.content_html = param_dict['detail_html']
+        self.insert_time =str_from_timestamp(time.time())
         return self
 
 

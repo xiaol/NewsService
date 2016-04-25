@@ -23,7 +23,7 @@ class Operations(object):
         try:
             result = self.__db[self.__table].insert(data)
         except:
-            result = 'Failed!'
+            result = False
         return result
 
     def insert_many(self, data_list):
