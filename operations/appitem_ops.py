@@ -12,7 +12,7 @@ class AppItemOperation(Operations):
         appitem = AppItem().get_item_from_request_param(appitem_param)
         exist = self.verify_item_exists(appitem.title)
         if not exist:
-            result = self.insert(appitem_param)
+            result = self.insert(appitem.__dict__)
             return result
         else:
             return 'Already exist in database.'
