@@ -1,3 +1,4 @@
+# coding=utf-8
 import json
 
 from tornado.web import RequestHandler, asynchronous
@@ -11,10 +12,9 @@ class NewsDataHandler(RequestHandler):
         try:
             news = json.loads(data)
         except Exception, e:
-            print e
+            response = response_fail_json(ret_message=u'json报文解析失败')
+            self.write(response)
             return
-        print news
-        # for i in news_list:
         ret, message = AppItemOperation().create_app_item(news)
         if ret:
             response = response_success_json(ret_message=message)
