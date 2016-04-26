@@ -48,7 +48,7 @@ class AppItem(object):
             self.author = param_dict['author']
         if 'summary' in param_dict and param_dict['summary']:
             self.summary = param_dict['summary']
-        self.publish_time = str_from_timestamp(int(param_dict['published_date']/1000))
+        self.publish_time = str_from_timestamp(int(param_dict['published_date'])/1000)
         if int(param_dict['published_date'])/1000 > time.time() + 24*60*60:
             self.status = 2
         self.content_html = param_dict['detail_html']
