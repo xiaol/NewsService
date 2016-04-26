@@ -11,6 +11,10 @@ from handler.topic import NewsDataHandler
 class Application(tornado.web.Application):
     def __init__(self):
 
+        settings = {
+            l
+        }
+
         handlers = [
             (r'/news', NewsDataHandler),
         ]
