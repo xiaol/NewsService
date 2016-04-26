@@ -49,7 +49,7 @@ class AppItem(object):
         if 'summary' in param_dict and param_dict['summary']:
             self.summary = param_dict['summary']
         self.publish_time = str_from_timestamp(int(param_dict['published_date']))
-        if int(param_dict['published_date']) > time.time() + 24*60*60:
+        if int(param_dict['published_date'])/1000 > time.time() + 24*60*60:
             self.status = 2
         self.content_html = param_dict['detail_html']
         self.insert_time =str_from_timestamp(time.time())
