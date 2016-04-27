@@ -11,7 +11,8 @@ class AppItem(object):
     content = None  # 内容 ['img': '', 'text': '', 'video': '',...]
     app_name = None # 抓取源APP的名称
     app_icon = None # 抓取源APP的icon
-    status = 1 # 状态标识 1:正常;2:时间大于当前+24H
+    status = 1 # 状态标识 1:正常;2:时间大于当前+24H;3:没有标题
+    task_status = 0 # 后续处理状态 0:未处理; 1:已上传; 2:数据异常; 3:上传失败
     author = None
     content_html = None  # 文章原始内容
 
