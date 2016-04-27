@@ -11,9 +11,9 @@ class AppItemOperation(Operations):
         if not flag:
             return False, 'Param "%s" is required.' % key
         appitem = AppItem().get_item_from_request_param(appitem_param)
-        exist = self.verify_item_exists(appitem.publish_time)
+        exist = self.verify_item_exists(appitem.publish_time, appitem.title)
         if exist:
-            return True, 'Already exist in database.'
+            return False, 'Already exist in database.'
 
         result = self.insert(appitem.__dict__)
         return result, 'Succeeded!'
@@ -28,9 +28,12 @@ class AppItemOperation(Operations):
                 return False, i
         return True, None
 
-    def verify_item_exists(self, publish_time):
+    def verify_item_exists(self, publish_time, title):
         conditions = AppItem()
-        conditions.publish_time = publish_time
+        if title:
+            conditions.title = title
+        else:
+            conditions.publish_time = publish_time
         ret = self.find_one(conditions=conditions.__dict__,)
         if ret:
             return True
