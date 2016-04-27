@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 import uuid
+import hashlib
 
 from utils.utility import str_from_timestamp
 
@@ -15,6 +16,7 @@ class AppItem(object):
     task_status = None # 后续处理状态 0:未处理; 1:已上传; 2:数据异常; 3:上传失败
     author = None
     content_html = None  # 文章原始内容
+    keys = None
 
     insert_time = None
     summary = None  # 摘要 str
@@ -40,7 +42,7 @@ class AppItem(object):
         return 'news'
 
     def get_item_from_request_param(self, param_dict):
-        self.title = param_dict['article_title']
+        self.title = param_dict.get('article_title', '')
         self.app_name = param_dict['app_name']
         self.app_icon = param_dict['app_icon']
         self.content_html = param_dict['detail_html']
@@ -57,6 +59,8 @@ class AppItem(object):
         self.content_html = param_dict['detail_html']
         self.insert_time = str_from_timestamp(time.time())
         self.task_status = 0
+        # 全文md5做key,用来排重.
+        self.key = hashlib.md5(param_dict['detail_html']).hexdigest()
         return self
 
 

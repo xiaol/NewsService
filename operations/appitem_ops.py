@@ -1,3 +1,5 @@
+import hashlib
+
 from operations import Operations
 from models.appitem import AppItem
 
@@ -11,7 +13,7 @@ class AppItemOperation(Operations):
         if not flag:
             return False, 'Param "%s" is required.' % key
         appitem = AppItem().get_item_from_request_param(appitem_param)
-        exist = self.verify_item_exists(appitem.publish_time, appitem.title)
+        exist = self.verify_item_exists(appitem.content_html)
         if exist:
             return False, 'Already exist in database.'
 
@@ -28,12 +30,9 @@ class AppItemOperation(Operations):
                 return False, i
         return True, None
 
-    def verify_item_exists(self, publish_time, title):
+    def verify_item_exists(self, content_html):
         conditions = AppItem()
-        if title:
-            conditions.title = title
-        else:
-            conditions.publish_time = publish_time
+        conditions.key = hashlib.md5(content_html).hexdigest()
         ret = self.find_one(conditions=conditions.__dict__,)
         if ret:
             return True

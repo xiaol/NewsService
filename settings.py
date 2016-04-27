@@ -1,6 +1,6 @@
 Debug = True
 
-if not Debug:
+if Debug:
     MONGODB_USER = 'ly'
     MONGODB_PWD = '1qaz*963.'
     MONGODB_HOST = '127.0.0.1'
@@ -8,7 +8,7 @@ if not Debug:
     MONGODB_DBNAME = 'News'
 
 
-elif Debug:
+elif not Debug:
     MONGODB_USER = 'ly'
     MONGODB_PWD = '1qaz*963.'
     MONGODB_HOST = '120.27.162.110'

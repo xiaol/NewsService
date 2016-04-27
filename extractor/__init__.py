@@ -7,7 +7,7 @@ from lxml import html
 from lxml.html.clean import Cleaner
 
 from extractor.cleaner import BaseCleaner, NewsCleaner
-from utils.utility import clean_date_time
+# from utils.utility import clean_date_time
 
 
 class NewsExtractor(object):
@@ -512,7 +512,7 @@ class BaseExtractor(object):
         :param string:str, 需要清洗的时间字符串
         :return: str
         """
-        return clean_date_time(string)
+        return string
 
     def exact_extract_post_source(self, param):
         return self.exact_extract_tag(self.base_soup, param)
@@ -571,7 +571,7 @@ class BaseExtractor(object):
                 sibling.extract()
             tag.extract()
 
-    def extract_content(self, param=None, clean_param_list=None,
+    def extract_content(self, param={'method': 'find_all', 'params': {'name': 'div'}}, clean_param_list=None,
                         clean_content_before_param=None,
                         clean_content_after_param=None):
         content = list()

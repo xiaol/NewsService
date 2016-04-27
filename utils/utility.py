@@ -3,6 +3,7 @@ from datetime import datetime
 from time import strftime, localtime
 import re
 
+from extractor import GeneralExtractor
 from utils.mongodb_handler import MongoDB
 
 
@@ -16,9 +17,11 @@ def news_verify(news):
     #     return False
     return True
 
+
 def str_from_timestamp(timestap):
     time_format = "%Y-%m-%d %H:%M:%S"
     return strftime(time_format, localtime(timestap))
+
 
 def clean_date_time(string):
     """清洗时间
@@ -85,3 +88,10 @@ def clean_date_time(string):
     time_string = ":".join([hour, minute, second])
     date_time_string = date_string + " " + time_string
     return date_time_string
+
+
+def extractor(content_html):
+    string = r'<div>' + content_html + r'</div>'
+    ex = GeneralExtractor(string)
+    content = ex()[4]
+    return content
