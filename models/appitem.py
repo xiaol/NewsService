@@ -60,7 +60,7 @@ class AppItem(object):
         self.insert_time = str_from_timestamp(time.time())
         self.task_status = 0
         # 全文md5做key,用来排重.
-        self.key = hashlib.md5(param_dict['detail_html'].encode('utf8')).hexdigest()
+        self.key = hashlib.md5(param_dict['detail_html']).hexdigest()
         return self
 
 

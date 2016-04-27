@@ -1,9 +1,9 @@
-Debug = True
+Debug = False
 
 if Debug:
     MONGODB_USER = 'ly'
     MONGODB_PWD = '1qaz*963.'
-    MONGODB_HOST = '127.0.0.1'
+    MONGODB_HOST = '120.27.162.110'
     MONGODB_PORT = 27017
     MONGODB_DBNAME = 'News'
 
@@ -11,7 +11,7 @@ if Debug:
 elif not Debug:
     MONGODB_USER = 'ly'
     MONGODB_PWD = '1qaz*963.'
-    MONGODB_HOST = '120.27.162.110'
+    MONGODB_HOST = '127.0.0.1'
     MONGODB_PORT = 27017
     MONGODB_DBNAME = 'News'
     POSTGRE_USER = 'postgres'
