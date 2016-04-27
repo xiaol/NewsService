@@ -23,7 +23,7 @@ if __name__ == '__main__':
                 db.news.update(i, {'$set': {'task_status': 2}})
                 continue
             item = dict()
-            item['url'] = hashlib.md5(i['content_html']).hexdigest()
+            item['url'] = i['key']
             item['title'] = i['title']
             item['publish_time'] = i['publish_time']
             item['docid'] = item['url']
@@ -37,16 +37,3 @@ if __name__ == '__main__':
             item['source_online'] = 0
             item['task_conf'] = '{}'
             r.set('news:app:' + item['url'],)
-
-
-
-[u'publish_time',
- u'docid',
- u'app_name',
- u'app_icon',
- u'author',
- u'summary',
- u'insert_time',
- u'title',
- u'_id',
- u'content_html']
