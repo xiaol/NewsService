@@ -14,12 +14,6 @@ from utils.postgredb_handler import get_source_name, add_spider_source
 from utils.utility import get_mongodb, extractor, change_text_txt
 from settings import Debug, REDIS_URL, NEWS_STORE_API
 
-if Debug == True:
-    r = Redis()
-else:
-    r = from_url(REDIS_URL, max_connections=3)
-
-
 _logger = logging.getLogger(__name__)
 
 
@@ -50,21 +44,24 @@ def store_app_news(key):
     key = base64.encodestring(key).replace('=', '')
     url = NEWS_STORE_API.format(key=key)
     ret = requests.get(url)
-    if r.status_code <= 300:
-        content = json.loads(r.content)
+    if ret.status_code <= 300:
+        content = json.loads(ret.content)
         if content['key'] == 'succes':
             _logger.info("store %s success" % key)
         else:
             _logger.error('store %s failed: %s' % (key, content['key']))
     else:
-        _logger.error('store %s failed code: %s' % (key, r.status_code))
+        _logger.error('store %s failed code: %s' % (key, ret.status_code))
 
 
 if __name__ == '__main__':
     source_names = set(get_source_name())
     while True:
         db = get_mongodb()
-        r = Redis()
+        if Debug == True:
+            r = Redis()
+        else:
+            r = from_url(REDIS_URL, max_connections=3)
         news = db.news.find({'task_status': 0, 'status': 1}, {'_id': 0}).limit(10)
         if not news:
             time.sleep(60)
