@@ -95,3 +95,15 @@ def extractor(content_html):
     ex = GeneralExtractor(string)
     content = ex()[4]
     return content
+
+
+def change_text_txt(content):
+    changed = list()
+    for item in content:
+        for key, value in item.items():
+            if key == "text":
+                # value = replace_a_href_to_ours(value)
+                changed.append({"txt": value})
+            else:
+                changed.append({key: value})
+    return changed
