@@ -49,11 +49,14 @@ def store_app_news(key):
     if ret.status_code <= 300:
         content = json.loads(ret.content)
         if content['key'] == 'succes':
-            _logger.info("store %s success" % key)
+            print "store %s success" % key
+         #   _logger.info("store %s success" % key)
         else:
-            _logger.error('store %s failed: %s' % (key, content['key']))
+            print 'store %s failed: %s' % (key, content['key'])
+          #  _logger.error('store %s failed: %s' % (key, content['key']))
     else:
-        _logger.error('store %s failed code: %s' % (key, ret.status_code))
+        print 'store %s failed code: %s' % (key, ret.status_code)
+        #_logger.error('store %s failed code: %s' % (key, ret.status_code))
 
 
 if __name__ == '__main__':

@@ -44,7 +44,6 @@ def verify_exists_by_source_name(source_name):
     conn, cur = get_postgredb()
     cur.execute("SELECT count(*) FROM spidersourcelist WHERE source_name='%s' AND channel_id != 35" % source_name)
     rows = cur.fetchall()
-    print rows
     if rows[0][0]:
         return True
     return False
