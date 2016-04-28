@@ -68,7 +68,6 @@ if __name__ == '__main__':
         if not news:
             time.sleep(60)
         for i in news:
-            print i
             if not i['title']:
                 db.news.update(i, {'$set': {'task_status': 2}})
                 continue
@@ -76,8 +75,9 @@ if __name__ == '__main__':
                 try:
                     source_id, source_name = add_spider_source(i['app_name'])
                     source_names[source_name] = source_id
-                except:
-                    db.news.update(i, {'$set': {'task_status': 3, 'status': 2}})
+                except Exception, e:
+                    print e
+                    # db.news.update(i, {'$set': {'task_status': 3, 'status': 2}})
                     continue
             item = get_redis_item_from_mongo_item(i)
             item['source_id'] = source_id
@@ -89,4 +89,5 @@ if __name__ == '__main__':
                 store_app_news(key)
                 db.news.update(i, {'$set': {'task_status': 1}})
             print 'ok'
+            exit()
         break
