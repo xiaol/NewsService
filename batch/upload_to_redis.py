@@ -25,7 +25,7 @@ def get_redis_item_from_mongo_item(i):
     item['title'] = i['title']
     item['pub_time'] = i['publish_time']
     item['docid'] = item['url']
-    soup = BeautifulSoup(item['content_html'])
+    soup = BeautifulSoup(i['content_html'])
     video = soup.find_all('video')
     if video:
         db = get_mongodb()
@@ -57,7 +57,8 @@ def store_app_news(key):
 
 
 if __name__ == '__main__':
-    source_names = set(get_source_name())
+    source_names = get_source_name()
+    print source_names
     while True:
         db = get_mongodb()
         if Debug == True:
@@ -68,22 +69,28 @@ if __name__ == '__main__':
         if not news:
             time.sleep(60)
         for i in news:
+            print i
             if not i['title']:
                 db.news.update(i, {'$set': {'task_status': 2}})
                 continue
             if i['app_name'] not in source_names and i['app_name'] + 'APP' not in source_names:
                 try:
                     source_id, source_name = add_spider_source(i['app_name'])
-                    source_names[source_name] = source_id
+                    source_names[i['app_name']] = source_id
                 except Exception, e:
                     print e
                     # db.news.update(i, {'$set': {'task_status': 3, 'status': 2}})
                     continue
-                    exit()
+            else:
+                source_id = source_names.get(i['app_name'])
+                if not source_id:
+                    source_id = source_names.get(i['app_name'] + 'APP')
+                if not source_id:
+                    continue
 
             item = get_redis_item_from_mongo_item(i)
-            item['source_id'] = source_id
             if item:
+                item['source_id'] = source_id
                 key = 'news:app:' + item['url']
                 r.hmset(key, item)
             # do http request to zhiguang

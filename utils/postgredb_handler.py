@@ -19,7 +19,7 @@ def get_source_name():
     source_dict = dict()
     for i in rows:
         # source_name_list.append(i[0].decode('utf8'))
-        source_dict[i['0']] = i['1']
+        source_dict[i[0].decode('utf8')] = i[1]
 
     conn.close()
     return source_dict
@@ -42,8 +42,9 @@ def add_spider_source(source_name):
 
 def verify_exists_by_source_name(source_name):
     conn, cur = get_postgredb()
-    cur.execute("SELECT count(*) FROM spidersourcelist WHERE source_name='%s'" % source_name)
+    cur.execute("SELECT count(*) FROM spidersourcelist WHERE source_name='%s' AND channel_id != 35" % source_name)
     rows = cur.fetchall()
+    print rows
     if rows[0][0]:
         return True
     return False
