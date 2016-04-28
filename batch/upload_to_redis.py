@@ -3,12 +3,14 @@ import base64
 import time
 import json
 import logging
+import sys, os
 
 import requests
 from bs4 import BeautifulSoup
 from redis import Redis
 from redis import from_url
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.postgredb_handler import get_source_name, add_spider_source
 from utils.utility import get_mongodb, extractor, change_text_txt
