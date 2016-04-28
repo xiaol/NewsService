@@ -79,6 +79,8 @@ if __name__ == '__main__':
                     print e
                     # db.news.update(i, {'$set': {'task_status': 3, 'status': 2}})
                     continue
+                    exit()
+
             item = get_redis_item_from_mongo_item(i)
             item['source_id'] = source_id
             if item:
@@ -89,5 +91,4 @@ if __name__ == '__main__':
                 store_app_news(key)
                 db.news.update(i, {'$set': {'task_status': 1}})
             print 'ok'
-            exit()
         break
