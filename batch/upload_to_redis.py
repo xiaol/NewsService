@@ -32,7 +32,12 @@ def get_redis_item_from_mongo_item(i):
         db.news.update(i, {'$set': {'task_status': 2, 'status': 4}})
         return None
     item['content_html'] = i['content_html']
-    item['content'] = json.dumps(change_text_txt(extractor(i['content_html'])))
+    content_list = extractor(i['content_html'])
+    if not content_list:
+        db = get_mongodb()
+        db.news.update(i, {'$set': {'task_status': 2, 'status': 5}})
+        return None
+    item['content'] = json.dumps(change_text_txt(content_list))
     item['channel_id'] = 35
     item['pub_name'] = i['app_name']
     item['source_name'] = i['app_name']
