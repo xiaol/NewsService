@@ -31,7 +31,7 @@ def get_redis_item_from_mongo_item(i):
         db = get_mongodb()
         db.news.update(i, {'$set': {'task_status': 2, 'status': 4}})
         return None
-
+    item['content_html'] = i['content_html']
     item['content'] = json.dumps(change_text_txt(extractor(i['content_html'])))
     item['channel_id'] = 35
     item['pub_name'] = i['app_name']
@@ -69,7 +69,6 @@ if __name__ == '__main__':
         if not news:
             time.sleep(60)
         for i in news:
-            print i
             if not i['title']:
                 db.news.update(i, {'$set': {'task_status': 2}})
                 continue
@@ -79,7 +78,7 @@ if __name__ == '__main__':
                     source_names[i['app_name']] = source_id
                 except Exception, e:
                     print e
-                    # db.news.update(i, {'$set': {'task_status': 3, 'status': 2}})
+                    db.news.update(i, {'$set': {'task_status': 3}})
                     continue
             else:
                 source_id = source_names.get(i['app_name'])
@@ -97,5 +96,3 @@ if __name__ == '__main__':
             if not Debug:
                 store_app_news(key)
                 db.news.update(i, {'$set': {'task_status': 1}})
-            print 'ok'
-        break
