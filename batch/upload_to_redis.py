@@ -38,6 +38,11 @@ def get_redis_item_from_mongo_item(i):
         db.news.update(i, {'$set': {'task_status': 2, 'status': 5}})
         return None
     item['content'] = json.dumps(change_text_txt(content_list))
+    img_num = 0
+    for i in content_list:
+        if 'img' in i:
+            img_num += 1
+    item['img_num'] = img_num
     item['channel_id'] = 35
     item['pub_name'] = i['app_name']
     item['source_name'] = i['app_name']
