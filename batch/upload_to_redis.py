@@ -105,6 +105,7 @@ if __name__ == '__main__':
                 item['source_id'] = source_id
                 key = 'news:app:' + item['url']
                 r.hmset(key, item)
+                r.expire(key, 60*60*24*3)
             # do http request to zhiguang
             if not Debug:
                 store_app_news(key)
