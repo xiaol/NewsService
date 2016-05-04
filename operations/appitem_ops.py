@@ -23,7 +23,7 @@ class AppItemOperation(Operations):
 
     @staticmethod
     def _is_create_param_valid(param):
-        require = ['published_date', 'detail_html', 'app_name', 'app_icon']
+        require = ['published_date', 'detail_html', 'app_name',]
         for i in require:
             if i not in param or not param[i]:
                 print i
@@ -38,5 +38,3 @@ class AppItemOperation(Operations):
             return True
         else:
             return False
-
-

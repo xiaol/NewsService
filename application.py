@@ -5,8 +5,7 @@ import tornado.options
 from tornado.options import options
 from tornado.web import RequestHandler
 
-
-from handler.topic import NewsDataHandler
+from handler.topic import NewsDataHandler, JikeNewsDataHandler
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -17,6 +16,7 @@ class Application(tornado.web.Application):
 
         handlers = [
             (r'/news', NewsDataHandler),
+            (r'/jike_news', JikeNewsDataHandler),
         ]
         tornado.web.Application.__init__(self, handlers, )
 

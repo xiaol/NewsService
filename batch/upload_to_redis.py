@@ -25,6 +25,7 @@ def get_redis_item_from_mongo_item(i):
     item['title'] = i['title']
     item['pub_time'] = i['publish_time']
     item['docid'] = item['url']
+    item['type'] = i['type']
     soup = BeautifulSoup(i['content_html'])
     video = soup.find_all('video')
     if video:
@@ -37,10 +38,12 @@ def get_redis_item_from_mongo_item(i):
         db = get_mongodb()
         db.news.update(i, {'$set': {'task_status': 2, 'status': 5}})
         return None
+    if 'link' in i:
+        content_list.append({"url": i['link']})
     item['content'] = json.dumps(change_text_txt(content_list))
     img_num = 0
-    for i in content_list:
-        if 'img' in i:
+    for j in content_list:
+        if 'img' in j:
             img_num += 1
     item['img_num'] = img_num
     item['channel_id'] = 35

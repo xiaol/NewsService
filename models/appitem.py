@@ -12,17 +12,19 @@ class AppItem(object):
     content = None  # 内容 ['img': '', 'text': '', 'video': '',...]
     app_name = None # 抓取源APP的名称
     app_icon = None # 抓取源APP的icon
-    status = None # 状态标识 1:正常;2:时间大于当前+24H;3:没有标题;4:视频;5:无content
+    status = None # 状态标识 1:正常;2:时间大于当前+24H;3:没有标题;4:视频;5:无content;0:暂不处理
     task_status = None # 后续处理状态 0:未处理; 1:已上传; 2:数据异常; 3:上传失败
     author = None
     content_html = None  # 文章原始内容
     keys = None
+    type = None
 
     insert_time = None
     summary = None  # 摘要 str
     love = None  # 喜爱 int
     up = None  # 顶 int
     down = None  # 踩 int
+    link = None
 
     docid = None  # 网站内部唯一标识
     channel = None  # 频道 str
@@ -44,21 +46,32 @@ class AppItem(object):
     def get_item_from_request_param(self, param_dict):
         self.title = param_dict.get('article_title', '')
         self.app_name = param_dict['app_name']
-        self.app_icon = param_dict['app_icon']
-        self.content_html = param_dict['detail_html']
+        self.content_html = param_dict['detail_html'].replace('\n', '')
         self.docid = uuid.uuid1().hex
+        self.type = 1
         if 'author' in param_dict and param_dict['author']:
             self.author = param_dict['author']
         if 'summary' in param_dict and param_dict['summary']:
             self.summary = param_dict['summary']
+        if 'app_icon' in param_dict and param_dict['app_icon']:
+            self.app_icon = param_dict['app_icon']
+
         self.publish_time = str_from_timestamp(int(param_dict['published_date'])/1000.0)
         if int(param_dict['published_date'])/1000.0 > time.time() + 24*60*60:
             self.status = 2
         else:
             self.status = 1
         self.content_html = param_dict['detail_html']
+        if 'type' in param_dict and param_dict['type']:
+            self.type = param_dict['type']
+            if 'link' in param_dict:
+                self.link = param_dict['link']
+        #"即刻"来源数据暂不处理
+        if self.type == 2:
+            self.status = 0
         self.insert_time = str_from_timestamp(time.time())
         self.task_status = 0
         # 全文md5做key,用来排重.
         self.key = hashlib.md5(param_dict['detail_html']).hexdigest()
+
         return self
