@@ -47,7 +47,10 @@ class JikeNewsDataHandler(RequestHandler):
             if 'author' in i and i['author']:
                 params['author'] = i['author']
             if 'summary' in i and i['summary']:
-                params['summary'] = i['summary']
+                try:
+                    params['summary'] = i['summary'].encode('utf8')
+                except:
+                    params['summary'] = i['summary']
                 if len(params['summary']) <= 60:
                     params['title'] = params['summary']
             else:
