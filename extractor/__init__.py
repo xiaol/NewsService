@@ -188,6 +188,18 @@ def get_img_src(base_url, tag):
     return ""
 
 
+def get_video_src(tag):
+    # print tag
+    if 'src' in tag.attrs:
+        return tag['src']
+    source = tag.find('source')
+    if not source:
+        return None
+    if 'src' in source.attrs:
+        return source['src']
+    return None
+
+
 def get_content_item(key, value):
     """构造 content 的内容
 
@@ -195,7 +207,7 @@ def get_content_item(key, value):
     :param value:str, 对应 key 的值
     :return:dict
     """
-    keys = {"text": "text", "image": "img"}
+    keys = {"text": "text", "image": "img", 'video': 'video'}
     assert key in keys
     return {keys[key]: value.strip()}
 
@@ -652,6 +664,11 @@ class GeneralExtractor(BaseExtractor):
                         content.append(get_content_item("image", src))
                 elif child.name == "div" or child.img or child.br:
                     self.parse_content_tag(child, content)
+                elif child.name == 'video':
+                    url = get_video_src(child)
+                    print url
+                    if url:
+                        content.append(get_content_item('video', url))
                 elif child.get_text().strip():
                     string = str(child)
                     string = remove_tag_name(string, ["p", "article"])

@@ -35,7 +35,7 @@ class NewsCleaner(BaseCleaner):
         "p", "h1", "h2", "h3", "h4", "h5", "h6",
         "a", "img", "br", "font",
         "b", "blod", "big", "i", "em", "italic", "small", "strike", "sub",
-        "strong", "sup", "strong", "tt", "u", 'video'
+        "strong", "sup", "strong", "tt", "u", 'video', 'source'
     )
     meta = True
     embedded = True
