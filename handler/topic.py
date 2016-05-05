@@ -37,7 +37,6 @@ class JikeNewsDataHandler(RequestHandler):
         item_list_json = self.get_argument('news_list')
         item_list = json.loads(item_list_json)
         # logging.warning('params: ' + str)
-        print item_list
         for i in item_list:
             params = dict()
             if 'app_name' not in i or 'published_date' not in i:
@@ -53,7 +52,7 @@ class JikeNewsDataHandler(RequestHandler):
                     params['title'] = params['summary']
             else:
                 params['summary'] = ''
-            params['detail_html'] = params['summary'].decode('utf8')
+            params['detail_html'] = params['summary']
             if 'pictureUrl' in i and i['pictureUrl']:
                 for j in i['pictureUrl']:
                     params['detail_html'] += '<img src= %s />' % j
