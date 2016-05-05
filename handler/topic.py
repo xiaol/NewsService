@@ -36,7 +36,8 @@ class JikeNewsDataHandler(RequestHandler):
         # args = self.request.arguments
         item_list_json = self.get_argument('news_list')
         item_list = json.loads(item_list_json)
-        logging.warning('params: ' + item_list_json)
+        # logging.warning('params: ' + str)
+        print item_list
         for i in item_list:
             params = dict()
             if 'app_name' not in i or 'published_date' not in i:
