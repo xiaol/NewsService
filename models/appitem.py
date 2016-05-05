@@ -78,6 +78,6 @@ class AppItem(object):
         except:
             pass
 
-        # self.key = hashlib.md5(param_dict['detail_html']).hexdigest()
-        self.key = content
+        self.key = hashlib.md5(param_dict['detail_html']).hexdigest()
+        # self.key = content
         return self
