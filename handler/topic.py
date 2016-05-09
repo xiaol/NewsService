@@ -58,7 +58,7 @@ class JikeNewsDataHandler(RequestHandler):
             params['detail_html'] = params['summary']
             if 'pictureUrl' in i and i['pictureUrl']:
                 for j in i['pictureUrl']:
-                    params['detail_html'] += '<img src= %s />' % j
+                    params['detail_html'] += '<img src= %s />' % str(j)
             if 'link' in i and i['link']:
                 params['link'] = i['link']
             ret, message = AppItemOperation().create_app_item(params)
