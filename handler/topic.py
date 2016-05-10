@@ -36,7 +36,6 @@ class JikeNewsDataHandler(RequestHandler):
         # args = self.request.arguments
         item_list_json = self.get_argument('news_list')
         item_list = json.loads(item_list_json)
-        logging.warning('params: ' + item_list_json)
         for i in item_list:
             params = dict()
             if 'app_name' not in i or 'published_date' not in i:
@@ -63,7 +62,7 @@ class JikeNewsDataHandler(RequestHandler):
                 params['link'] = i['link']
             ret, message = AppItemOperation().create_app_item(params)
             if not ret:
-                logging.warning('params: ' + json.dumps(i))
+                # logging.warning('params: ' + json.dumps(i))
                 logging.warning('Warning message: ' + message)
 
         response = response_success_json()
