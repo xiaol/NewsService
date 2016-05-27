@@ -66,9 +66,12 @@ class AppItem(object):
             self.type = param_dict['type']
             if 'link' in param_dict:
                 self.link = param_dict['link']
+
         #"即刻"来源数据暂不处理
-        if self.type == 2:
-            self.status = 0
+        # if self.type == 2:
+        #     self.status = 0
+        #
+
         self.insert_time = str_from_timestamp(time.time())
         self.task_status = 0
         # 全文md5做key,用来排重.

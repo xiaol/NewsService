@@ -668,7 +668,7 @@ class GeneralExtractor(BaseExtractor):
                     url = get_video_src(child)
                     print url
                     if url:
-                        content.append(get_content_item('video', url))
+                        content.append(get_content_item('vid', url))
                 elif child.get_text().strip():
                     string = str(child)
                     string = remove_tag_name(string, ["p", "article"])

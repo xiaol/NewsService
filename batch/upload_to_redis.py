@@ -15,6 +15,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.postgredb_handler import get_source_name, add_spider_source
 from utils.utility import get_mongodb, extractor, change_text_txt
 from settings import Debug, REDIS_URL, NEWS_STORE_API
+from newsextractor import extract
 
 _logger = logging.getLogger(__name__)
 
@@ -85,31 +86,93 @@ if __name__ == '__main__':
         if not news:
             time.sleep(60)
         for i in news:
-            if not i['title']:
-                db.news.update(i, {'$set': {'task_status': 2}})
-                continue
-            if i['app_name'] not in source_names and i['app_name'] + 'APP' not in source_names:
-                try:
-                    source_id, source_name = add_spider_source(i['app_name'])
-                    source_names[i['app_name']] = source_id
-                except Exception, e:
-                    print e
-                    db.news.update(i, {'$set': {'task_status': 3}})
+            if i['type'] == 1:
+                if not i['title']:
+                    db.news.update(i, {'$set': {'task_status': 2}})
                     continue
-            else:
-                source_id = source_names.get(i['app_name'])
-                if not source_id:
-                    source_id = source_names.get(i['app_name'] + 'APP')
-                if not source_id:
-                    continue
+                if i['app_name'] not in source_names and i['app_name'] + 'APP' not in source_names:
+                    try:
+                        source_id, source_name = add_spider_source(i['app_name'])
+                        source_names[i['app_name']] = source_id
+                    except Exception, e:
+                        print e
+                        db.news.update(i, {'$set': {'task_status': 3}})
+                        continue
+                else:
+                    source_id = source_names.get(i['app_name'])
+                    if not source_id:
+                        source_id = source_names.get(i['app_name'] + 'APP')
+                    if not source_id:
+                        continue
 
-            item = get_redis_item_from_mongo_item(i)
-            if item:
+                item = get_redis_item_from_mongo_item(i)
+                if item:
+                    item['source_id'] = source_id
+                    key = 'news:app:' + item['url']
+                    r.hmset(key, item)
+                    r.expire(key, 60*60*24*3)
+                # do http request to zhiguang
+                if not Debug:
+                    store_app_news(key)
+                    db.news.update(i, {'$set': {'task_status': 1}})
+
+            elif i['type'] == 2:
+                if 'link' not in i or not i['link']:
+                    db.news.update(i, {'$set': {'status': 0}})
+                if i['app_name'] not in source_names and i['app_name'] + 'APP' not in source_names:
+                    try:
+                        source_id, source_name = add_spider_source(i['app_name'])
+                        source_names[i['app_name']] = source_id
+                    except Exception, e:
+                        print e
+                        db.news.update(i, {'$set': {'task_status': 3}})
+                        continue
+                else:
+                    source_id = source_names.get(i['app_name'])
+                    if not source_id:
+                        source_id = source_names.get(i['app_name'] + 'APP')
+                    if not source_id:
+                        continue
+
+                ret = extract(i['link'])
+                if not ret[5] or not ret[0] or not ret[1]:
+                    db.news.update(i, {'$set': {'task_status': 2}})
+                    continue
+                item = dict()
+                item['url'] = i['link']
+                item['title'] = ret[0]
+                item['pub_time'] = ret[1]
+                item['docid'] = item['url']
+                item['type'] = i['type']
+                item['content_html'] = ''
+                content_list = ret[5]
+                if not content_list:
+                    db.news.update(i, {'$set': {'task_status':2, 'status': 5}})
+                    continue
+                item['content'] = json.dumps(change_text_txt(content_list))
+                img_num = 0
+                is_video = False
+                for j in content_list:
+                    if 'img' in j:
+                        img_num += 1
+                    if 'vid' in j:
+                        is_video = True
+                        break
+                if is_video:
+                    continue
+                item['img_num'] = img_num
+                item['channel_id'] = 35
+                item['pub_name'] = i['appname']
+                item['source_name'] = i['app_name']
+                item['source_online'] = 0
+                item['task_conf'] = '{}'
+                key = 'news:app:' + i['key']
                 item['source_id'] = source_id
                 key = 'news:app:' + item['url']
                 r.hmset(key, item)
-                r.expire(key, 60*60*24*3)
-            # do http request to zhiguang
-            if not Debug:
-                store_app_news(key)
-                db.news.update(i, {'$set': {'task_status': 1}})
+                r.expire(key, 60 * 60 * 24 * 3)
+                if not Debug:
+                    store_app_news(key)
+                    db.news.update(i, {'$set': {'task_status': 1}})
+            else:
+                db.news.update(i, {'$set': {'status': 0}})
