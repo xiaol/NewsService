@@ -175,7 +175,7 @@ if __name__ == '__main__':
                 item['task_conf'] = '{}'
                 key = 'news:app:' + i['key']
                 item['source_id'] = source_id
-                key = 'news:app:' + item['url']
+                #key = 'news:app:' + item['url']
                 r.hmset(key, item)
                 r.expire(key, 60 * 60 * 24 * 3)
                 if not Debug:
