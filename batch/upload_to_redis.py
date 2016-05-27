@@ -83,7 +83,8 @@ if __name__ == '__main__':
         else:
             r = from_url(REDIS_URL, max_connections=3)
         news = db.news.find({'task_status': 0, 'status': 1}, {'_id': 0}).limit(10)
-        if not news:
+        print news.count()
+        if not news.count():
             time.sleep(60)
         for i in news:
             if i['type'] == 1:
@@ -119,6 +120,7 @@ if __name__ == '__main__':
             elif i['type'] == 2:
                 if 'link' not in i or not i['link']:
                     db.news.update(i, {'$set': {'status': 0}})
+                    continue
                 if i['app_name'] not in source_names and i['app_name'] + 'APP' not in source_names:
                     try:
                         source_id, source_name = add_spider_source(i['app_name'])
@@ -133,8 +135,12 @@ if __name__ == '__main__':
                         source_id = source_names.get(i['app_name'] + 'APP')
                     if not source_id:
                         continue
-
-                ret = extract(i['link'])
+                try:
+                    print '______step 1_______'
+                    ret = extract(i['link'])
+                except:
+                    db.news.update(i, {'$set': {'task_status': 3}})
+                    continue
                 if not ret[5] or not ret[0] or not ret[1]:
                     db.news.update(i, {'$set': {'task_status': 2}})
                     continue
@@ -149,6 +155,7 @@ if __name__ == '__main__':
                 if not content_list:
                     db.news.update(i, {'$set': {'task_status':2, 'status': 5}})
                     continue
+                print '_________step 2_________'
                 item['content'] = json.dumps(change_text_txt(content_list))
                 img_num = 0
                 is_video = False
@@ -162,7 +169,7 @@ if __name__ == '__main__':
                     continue
                 item['img_num'] = img_num
                 item['channel_id'] = 35
-                item['pub_name'] = i['appname']
+                item['pub_name'] = i['app_name']
                 item['source_name'] = i['app_name']
                 item['source_online'] = 0
                 item['task_conf'] = '{}'
@@ -172,7 +179,9 @@ if __name__ == '__main__':
                 r.hmset(key, item)
                 r.expire(key, 60 * 60 * 24 * 3)
                 if not Debug:
+                    print '______step 3__________'
                     store_app_news(key)
                     db.news.update(i, {'$set': {'task_status': 1}})
+                    print '______step 4_____'
             else:
                 db.news.update(i, {'$set': {'status': 0}})
