@@ -58,6 +58,8 @@ def get_redis_item_from_mongo_item(i):
 
 def store_app_news(key):
     key = base64.encodestring(key).replace('=', '')
+    key = base64.encodestring(key).replace('\r', '')
+    key = base64.encodestring(key).replace('\n', '')
     url = NEWS_STORE_API.format(key=key)
     ret = requests.get(url)
     if ret.status_code <= 300:
@@ -73,7 +75,7 @@ def store_app_news(key):
         #_logger.error('store %s failed code: %s' % (key, ret.status_code))
 
     url = NEWS_STORE_API_V2.format(key=key)
-    ret = requests.get(url)
+    ret = requests.post(url)
     if ret.status_code <= 300:
         content = json.loads(ret.content)
         if content['code'] == 2000:
