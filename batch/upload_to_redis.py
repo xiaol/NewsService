@@ -14,7 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.postgredb_handler import get_source_name, add_spider_source
 from utils.utility import get_mongodb, extractor, change_text_txt
-from settings import Debug, REDIS_URL, NEWS_STORE_API
+from settings import Debug, REDIS_URL, NEWS_STORE_API, NEWS_STORE_API_V2
 from newsextractor import extract
 
 _logger = logging.getLogger(__name__)
@@ -47,11 +47,11 @@ def get_redis_item_from_mongo_item(i):
         if 'img' in j:
             img_num += 1
     item['img_num'] = img_num
-    item['channel_id'] = 35
+    item['channel_id'] = '35'
     item['pub_name'] = i['app_name']
     item['source_name'] = i['app_name']
 
-    item['source_online'] = 0
+    item['source_online'] = '1'
     item['task_conf'] = '{}'
     return item
 
@@ -63,13 +63,27 @@ def store_app_news(key):
     if ret.status_code <= 300:
         content = json.loads(ret.content)
         if content['key'] == 'succes':
-            print "store %s success" % key
+            print "store %s success v1" % key
          #   _logger.info("store %s success" % key)
         else:
-            print 'store %s failed: %s' % (key, content['key'])
+            print 'store %s failed v1: %s' % (key, content['key'])
           #  _logger.error('store %s failed: %s' % (key, content['key']))
     else:
-        print 'store %s failed code: %s' % (key, ret.status_code)
+        print 'store %s failed code v1: %s' % (key, ret.status_code)
+        #_logger.error('store %s failed code: %s' % (key, ret.status_code))
+
+    url = NEWS_STORE_API_V2.format(key=key)
+    ret = requests.get(url)
+    if ret.status_code <= 300:
+        content = json.loads(ret.content)
+        if content['code'] == 2000:
+            print "store %s success v2" % key
+         #   _logger.info("store %s success" % key)
+        else:
+            print 'store %s failed v2: %s' % (key, content['key'])
+          #  _logger.error('store %s failed: %s' % (key, content['key']))
+    else:
+        print 'store %s failed code v2: %s' % (key, ret.status_code)
         #_logger.error('store %s failed code: %s' % (key, ret.status_code))
 
 
@@ -86,6 +100,7 @@ if __name__ == '__main__':
         print news.count()
         if not news.count():
             time.sleep(60)
+            continue
         for i in news:
             if i['type'] == 1:
                 if not i['title']:
@@ -108,7 +123,7 @@ if __name__ == '__main__':
 
                 item = get_redis_item_from_mongo_item(i)
                 if item:
-                    item['source_id'] = source_id
+                    item['source_id'] = str(source_id)
                     key = 'news:app:' + item['url']
                     r.hmset(key, item)
                     r.expire(key, 60*60*24*3)
@@ -150,7 +165,7 @@ if __name__ == '__main__':
                 item['pub_time'] = ret[1]
                 item['docid'] = item['url']
                 item['type'] = i['type']
-                item['content_html'] = ''
+                item['content_html'] = i['link']
                 content_list = ret[5]
                 if not content_list:
                     db.news.update(i, {'$set': {'task_status':2, 'status': 5}})
@@ -168,13 +183,13 @@ if __name__ == '__main__':
                 if is_video:
                     continue
                 item['img_num'] = img_num
-                item['channel_id'] = 35
+                item['channel_id'] = '35'
                 item['pub_name'] = i['app_name']
                 item['source_name'] = i['app_name']
-                item['source_online'] = 0
+                item['source_online'] = '1'
                 item['task_conf'] = '{}'
                 key = 'news:app:' + i['key']
-                item['source_id'] = source_id
+                item['source_id'] = str(source_id)
                 #key = 'news:app:' + item['url']
                 r.hmset(key, item)
                 r.expire(key, 60 * 60 * 24 * 3)

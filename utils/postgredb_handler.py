@@ -35,8 +35,14 @@ def add_spider_source(source_name):
         '''INSERT INTO spidersourcelist (id, create_time, source_name, channel_name, channel_id, queue_name, frequency,status)
             VALUES(%s, %s, %s, %s, %s, %s, %s, %s);''',
         (source_id, datetime.now(), source_name, 'APP', 35, 'spider:news:app:start_urls', 20, 0))
+    cur.execute(
+        '''INSERT INTO sourcelist_v2 (id, ctime, sname, cname, cid, queue, rate, status, state)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);''',
+        (source_id, datetime.now(), source_name, 'APP', 35, 'spider:news:app:start_urls', 20, 0, 1)
+    )
     conn.commit()
     conn.close()
+
     return source_id, source_name
 
 

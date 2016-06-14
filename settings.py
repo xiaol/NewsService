@@ -26,4 +26,5 @@ elif not Debug:
 
 REDIS_URL = 'redis://ccd827d637514872:LYcache2015@ccd827d637514872.m.cnhza.kvstore.aliyuncs.com:6379'
 NEWS_STORE_API = "http://api.deeporiginalx.com/bdp/spider/pipeline/task/{key}"
+NEWS_STORE_API_V2 = 'http://bdp.deeporiginalx.com/v2/sps/ns/{key}'
 
