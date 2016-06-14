@@ -58,8 +58,8 @@ def get_redis_item_from_mongo_item(i):
 
 def store_app_news(key):
     key = base64.encodestring(key).replace('=', '')
-    key = base64.encodestring(key).replace('\r', '')
-    key = base64.encodestring(key).replace('\n', '')
+    key = key.replace('\r', '')
+    key = key.replace('\n', '')
     url = NEWS_STORE_API.format(key=key)
     ret = requests.get(url)
     if ret.status_code <= 300:
