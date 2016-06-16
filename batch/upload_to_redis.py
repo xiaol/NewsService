@@ -108,6 +108,9 @@ if __name__ == '__main__':
                 if not i['title']:
                     db.news.update(i, {'$set': {'task_status': 2}})
                     continue
+                if i['app_name'] == 'Imgur':
+                    db.news.update(i, {'$set': {'task_status': 3}})
+                    continue
                 if i['app_name'] not in source_names and i['app_name'] + 'APP' not in source_names:
                     try:
                         source_id, source_name = add_spider_source(i['app_name'])
