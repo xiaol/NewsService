@@ -17,7 +17,11 @@ image_service_key = "service:news:image:md5"
 
 
 def download_image(url):
-    r = requests.get(url, headers=headers)
+    try:
+        r = requests.get(url, headers=headers, )
+    except Exception as e:
+        print e.message
+        r = None
     if not r:
         return None
     if r.status_code >= 400:
