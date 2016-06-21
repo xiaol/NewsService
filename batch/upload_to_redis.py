@@ -41,11 +41,13 @@ def get_redis_item_from_mongo_item(i):
         return None
     if 'link' in i:
         content_list.append({"url": i['link']})
-    item['content'] = json.dumps(change_text_txt(content_list))
     img_num = 0
     for j in content_list:
         if 'img' in j:
             img_num += 1
+    content_list = clean_content(content_list, img_num, i['key'])
+    item['content'] = json.dumps(change_text_txt(content_list))
+
     item['img_num'] = img_num
     item['channel_id'] = '35'
     item['pub_name'] = i['app_name']
@@ -185,7 +187,7 @@ if __name__ == '__main__':
 
                 if is_video:
                     continue
-                content_list = clean_content(content_list)
+                content_list = clean_content(content_list, img_num, i['link'])
                 item['content'] = json.dumps(change_text_txt(content_list))
                 if not content_list:
                     db.news.update(i, {'$set': {'task_status':2, 'status': 5}})
