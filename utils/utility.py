@@ -4,6 +4,7 @@ from time import strftime, localtime
 import re
 
 from extractor import GeneralExtractor
+from utils.image import is_dirty_image
 from utils.mongodb_handler import MongoDB
 
 
@@ -107,3 +108,39 @@ def change_text_txt(content):
             else:
                 changed.append({key: value})
     return changed
+
+
+def clean_content(self, content, image_number, url):
+    cleaned = list()
+    index = 1
+    length = len(content)
+    if url.startswith("http://mp.weixin.qq.com/"):
+        for item in content:
+            k, v = item.items()[0]
+            # if k == "txt":
+            #     if not is_dirty_text(v):
+            #         cleaned.append({k: v})
+            if k == "img":
+                if not is_dirty_image(v):
+                    cleaned.append({k: v})
+            else:
+                cleaned.append({k: v})
+        return cleaned
+    for i, item in enumerate(content, start=1):
+        k, v = item.items()[0]
+        # if k == "txt":
+        #     if not self.is_dirty_text(v):
+        #         cleaned.append({k: v})
+        if k == "img":
+            if (index == 1 or index == image_number or 1.0 * i / length >= 0.7) \
+                    and is_dirty_image(v):
+                # _logger.info("remove qr image: %s" % v)
+                print 'remove qr image: %s' % v
+            else:
+                cleaned.append({k: v})
+            index += 1
+        else:
+            cleaned.append({k: v})
+    if len(cleaned) == 0:
+        return None
+    return cleaned

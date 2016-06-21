@@ -13,7 +13,7 @@ from redis import from_url
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.postgredb_handler import get_source_name, add_spider_source
-from utils.utility import get_mongodb, extractor, change_text_txt
+from utils.utility import get_mongodb, extractor, change_text_txt, clean_content
 from settings import Debug, REDIS_URL, NEWS_STORE_API, NEWS_STORE_API_V2
 from newsextractor import extract
 
@@ -172,11 +172,8 @@ if __name__ == '__main__':
                 item['type'] = i['type']
                 item['content_html'] = i['link']
                 content_list = ret[5]
-                if not content_list:
-                    db.news.update(i, {'$set': {'task_status':2, 'status': 5}})
-                    continue
+
                 print '_________step 2_________'
-                item['content'] = json.dumps(change_text_txt(content_list))
                 img_num = 0
                 is_video = False
                 for j in content_list:
@@ -185,7 +182,13 @@ if __name__ == '__main__':
                     if 'vid' in j:
                         is_video = True
                         break
+
                 if is_video:
+                    continue
+                content_list = clean_content(content_list)
+                item['content'] = json.dumps(change_text_txt(content_list))
+                if not content_list:
+                    db.news.update(i, {'$set': {'task_status':2, 'status': 5}})
                     continue
                 item['img_num'] = img_num
                 item['channel_id'] = '35'
