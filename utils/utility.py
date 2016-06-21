@@ -110,7 +110,7 @@ def change_text_txt(content):
     return changed
 
 
-def clean_content(self, content, image_number, url):
+def clean_content(content, image_number, url):
     cleaned = list()
     index = 1
     length = len(content)
