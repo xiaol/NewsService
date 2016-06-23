@@ -32,9 +32,9 @@ def add_spider_source(source_name):
     if ret:
         source_name = source_name + 'APP'
     cur.execute(
-        '''INSERT INTO spidersourcelist (id, create_time, source_name, channel_name, channel_id, queue_name, frequency,status)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s);''',
-        (source_id, datetime.now(), source_name, 'APP', 35, 'spider:news:app:start_urls', 20, 0))
+        '''INSERT INTO spidersourcelist (id, create_time, source_name, channel_name, channel_id, queue_name, frequency,status, online)
+            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s);''',
+        (source_id, datetime.now(), source_name, 'APP', 35, 'spider:news:app:start_urls', 20, 0, 1))
     cur.execute(
         '''INSERT INTO sourcelist_v2 (id, ctime, sname, cname, cid, queue, rate, status, state)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);''',
