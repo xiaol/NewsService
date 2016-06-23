@@ -18,7 +18,7 @@ image_service_key = "service:news:image:md5"
 
 def download_image(url):
     try:
-        r = requests.get(url, headers=headers, )
+        r = requests.get(url, headers=headers, timeout=30)
     except Exception as e:
         print e.message
         r = None
