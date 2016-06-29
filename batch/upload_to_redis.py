@@ -134,6 +134,9 @@ if __name__ == '__main__':
                     key = 'news:app:' + item['url']
                     r.hmset(key, item)
                     r.expire(key, 60*60*24*3)
+                else:
+                    print i
+                    continue
                 # do http request to zhiguang
                 if not Debug:
                     store_app_news(key)
@@ -186,6 +189,7 @@ if __name__ == '__main__':
                         break
 
                 if is_video:
+                    db.news.update(i, {'$set': {'task_status':2, 'status': 4}})
                     continue
                 content_list = clean_content(content_list, img_num, i['link'])
                 item['content'] = json.dumps(change_text_txt(content_list))
