@@ -63,14 +63,14 @@ def store_app_news(key):
     key = key.replace('\r', '')
     key = key.replace('\n', '')
     url = NEWS_STORE_API.format(key=key)
-    ret = requests.get(url)
+    ret = requests.get(url, timeout=30)
     if ret.status_code <= 300:
         content = json.loads(ret.content)
         if content['key'] == 'succes':
             print "store %s success v1" % key
          #   _logger.info("store %s success" % key)
         else:
-            print 'store %s failed v1: %s' % (key, content['key'])
+            print 'store %s failed v1: %s' % (key, ret.content)
           #  _logger.error('store %s failed: %s' % (key, content['key']))
     else:
         print 'store %s failed code v1: %s' % (key, ret.status_code)
