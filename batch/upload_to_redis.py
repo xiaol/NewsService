@@ -84,7 +84,7 @@ def store_app_news(key):
             print "store %s success v2" % key
          #   _logger.info("store %s success" % key)
         else:
-            print 'store %s failed v2: %s' % (key, content['code'])
+            print 'store %s failed v2: %s' % (key, ret.content)
           #  _logger.error('store %s failed: %s' % (key, content['key']))
     else:
         print 'store %s failed code v2: %s' % (key, ret.status_code)
