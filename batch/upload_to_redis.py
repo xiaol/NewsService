@@ -46,6 +46,10 @@ def get_redis_item_from_mongo_item(i):
         if 'img' in j:
             img_num += 1
     content_list = clean_content(content_list, img_num, i['key'])
+    if not content_list:
+        db = get_mongodb()
+        db.news.update(i, {'$set': {'task_status': 2, 'status': 5}})
+        return None
     item['content'] = json.dumps(change_text_txt(content_list))
 
     item['img_num'] = img_num
