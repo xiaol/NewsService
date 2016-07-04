@@ -135,7 +135,6 @@ if __name__ == '__main__':
                     r.hmset(key, item)
                     r.expire(key, 60*60*24*3)
                 else:
-                    print i
                     continue
                 # do http request to zhiguang
                 if not Debug:
@@ -192,10 +191,11 @@ if __name__ == '__main__':
                     db.news.update(i, {'$set': {'task_status':2, 'status': 4}})
                     continue
                 content_list = clean_content(content_list, img_num, i['link'])
-                item['content'] = json.dumps(change_text_txt(content_list))
                 if not content_list:
                     db.news.update(i, {'$set': {'task_status':2, 'status': 5}})
                     continue
+                item['content'] = json.dumps(change_text_txt(content_list))
+
                 item['img_num'] = img_num
                 item['channel_id'] = '35'
                 item['pub_name'] = i['app_name']
