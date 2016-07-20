@@ -114,6 +114,15 @@ if __name__ == '__main__':
                 if not i['title']:
                     db.news.update(i, {'$set': {'task_status': 2}})
                     continue
+
+                is_eng = True
+                for j in i['title']:
+                    if u'\u4e00' < j < u'\u9fa5':
+                        is_eng = False
+                if is_eng:
+                    db.news.update(i, {'$set': {'task_status': 6}})
+                    continue
+
                 if i['app_name'] == 'Imgur':
                     db.news.update(i, {'$set': {'task_status': 3}})
                     continue
@@ -171,6 +180,14 @@ if __name__ == '__main__':
                     continue
                 if not ret[5] or not ret[0] or not ret[1]:
                     db.news.update(i, {'$set': {'task_status': 2}})
+                    continue
+
+                is_eng = True
+                for j in i['title']:
+                    if u'\u4e00' < j < u'\u9fa5':
+                        is_eng = False
+                if is_eng:
+                    db.news.update(i, {'$set': {'task_status': 6}})
                     continue
                 item = dict()
                 item['url'] = i['link']
