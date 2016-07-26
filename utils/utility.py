@@ -121,7 +121,13 @@ def clean_content(content, image_number, url):
             #     if not is_dirty_text(v):
             #         cleaned.append({k: v})
             if k == "img":
-                if not is_dirty_image(v):
+                is_dirty = False
+                try:
+                    is_dirty = is_dirty_image(v)
+                except Exception as e:
+                    print v
+                    print e
+                if not is_dirty:
                     cleaned.append({k: v})
             else:
                 cleaned.append({k: v})
@@ -132,8 +138,13 @@ def clean_content(content, image_number, url):
         #     if not self.is_dirty_text(v):
         #         cleaned.append({k: v})
         if k == "img":
+            is_dirty = False
+            try:
+                is_dirty = is_dirty_image(v)
+            except Exception as e:
+                print e
             if (index == 1 or index == image_number or 1.0 * i / length >= 0.7) \
-                    and is_dirty_image(v):
+                    and is_dirty:
                 # _logger.info("remove qr image: %s" % v)
                 print 'remove qr image: %s' % v
             else:
