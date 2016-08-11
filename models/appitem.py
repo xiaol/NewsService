@@ -3,6 +3,8 @@ import time
 import uuid
 import hashlib
 
+import datetime
+
 from utils.utility import str_from_timestamp
 
 
@@ -78,3 +80,79 @@ class AppItem(object):
         self.key = hashlib.md5(param_dict['detail_html']).hexdigest()
         # self.key = content
         return self
+
+
+class AppRequestItem(object):
+    category = None
+    insert = None
+    cookies = None
+    online_source_sid = None
+    channel_id = None
+    url = None
+    fields = None
+    pagination = None
+    headers = None
+    state = None
+    html = None
+    proxy = None
+    pages = None
+    crawl_url = None
+
+    @staticmethod
+    def get_table_name():
+        return 'requests'
+
+    def get_request_item_from_param(self, param_dict):
+        self.fields = dict()
+        self.fields['title'] = param_dict['article_title']
+        self.fields['publish_site'] = param_dict['app_name']
+        self.fields['publish_time'] = str_from_timestamp(int(param_dict['published_date'])/1000.0)
+        if 'author' in param_dict and param_dict['author']:
+            self.fields['author'] = param_dict['author']
+        if 'summary' in param_dict and param_dict['summary']:
+            self.fields['abstract'] = param_dict['summary']
+        self.insert = datetime.datetime.now()
+        self.channel_id = param_dict['channel_id']
+        self.html = self._get_html(param_dict['article_title'], param_dict['detail_html'])
+        self.online_source_sid = param_dict['online_source_sid']
+        self.state = 2
+        self.url = 'http://www.fakewandoujia.com/' + hashlib.md5(param_dict['detail_html']).hexdigest()
+        self.crawl_url = self.url
+        self.category = 4
+        self.cookies = {}
+        self.headers = {}
+        self.pagination = False
+        self.pages = []
+        self.proxy = 0
+        return self
+
+    @staticmethod
+    def _get_html(title, document):
+        html = '''<html><head></head><body>\
+    <div id="app_article_title">%s</div><div id="app_article_content">%s</div>\
+    </body></html>''' % (title, document)
+        return html
+
+
+class AppNewsItem(object):
+    insert = None
+    publish_time = None
+    request_id = None
+    author = None
+    abstract = None
+    title = None
+    upload = None
+    has_video = None
+    content = None
+    publish_site = None
+    regional = None
+    channel_id = None
+    crawl_time = None
+    has_image = None
+    keywords = None
+    crawl_url = None
+    editor = None
+
+    @staticmethod
+    def get_table_name():
+        return 'news'

@@ -2,10 +2,12 @@
 import logging
 import json
 import random
+from bson import ObjectId
 
 from tornado.web import RequestHandler, asynchronous
 
 from operations.appitem_ops import AppItemOperation
+from operations.apprequest_ops import AppRequestItemOperation
 from utils.response_handler import response_fail_json, response_success_json
 from utils.utility import get_mongodb, extractor, change_text_txt
 
@@ -21,7 +23,9 @@ class NewsDataHandler(RequestHandler):
         #     response = response_fail_json(ret_message=u'json报文解析失败')
         #     self.write(response)
         #     return
-        ret, message = AppItemOperation().create_app_item(args)
+        args['channel_id'] = ObjectId('57ac38feda083a1c19957b1c')
+        args['online_source_sid'] = 3732
+        ret, message = AppRequestItemOperation().create_app_item(args)
         if ret:
             response = response_success_json(ret_message=message)
         else:
