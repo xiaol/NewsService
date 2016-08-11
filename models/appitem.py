@@ -97,10 +97,11 @@ class AppRequestItem(object):
     proxy = None
     pages = None
     crawl_url = None
+    running = None
 
     @staticmethod
     def get_table_name():
-        return 'requests'
+        return 'testRequests'
 
     def get_request_item_from_param(self, param_dict):
         self.fields = dict()
@@ -118,12 +119,13 @@ class AppRequestItem(object):
         self.state = 2
         self.url = 'http://www.fakewandoujia.com/' + hashlib.md5(param_dict['detail_html']).hexdigest()
         self.crawl_url = self.url
-        self.category = 4
+        self.category = 1
         self.cookies = {}
         self.headers = {}
         self.pagination = False
         self.pages = []
         self.proxy = 0
+        self.running = False
         return self
 
     @staticmethod
