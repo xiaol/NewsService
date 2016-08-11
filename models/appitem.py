@@ -101,7 +101,7 @@ class AppRequestItem(object):
 
     @staticmethod
     def get_table_name():
-        return 'testRequests'
+        return 'requests'
 
     def get_request_item_from_param(self, param_dict):
         self.fields = dict()
