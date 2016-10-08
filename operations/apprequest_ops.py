@@ -20,6 +20,17 @@ class AppRequestItemOperation(Operations):
         result = self.insert(appitem.__dict__)
         return result, 'Succeeded!'
 
+    def create_jike_app_item(self, appitem_param):
+        flag, key = self._is_create_param_valid(appitem_param)
+        if not flag:
+         return False, 'Param "%s" is required.' % key
+        appitem = AppRequestItem().get_request_item_from_jike_param(appitem_param)
+        exist = self.verify_item_exists(appitem.url)
+        if exist:
+            return False, 'Already exist in database.'
+
+        result = self.insert(appitem.__dict__)
+        return result, 'Succeeded!'
 
     @staticmethod
     def _is_create_param_valid(param):
@@ -29,6 +40,16 @@ class AppRequestItemOperation(Operations):
                 print i
                 return False, i
         return True, None
+
+    # @staticmethod
+    # def _is_jike_create_param_valid(param):
+    #     require = ['published_date', 'detail_html', 'app_name', 'title']
+    #     for i in require:
+    #         if i not in param or not param[i]:
+    #             print i
+    #             return False, i
+    #     return True, None
+
 
     def verify_item_exists(self, key):
         conditions = AppRequestItem()

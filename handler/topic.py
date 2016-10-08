@@ -4,7 +4,7 @@ import json
 import random
 from bson import ObjectId
 
-from tornado.web import RequestHandler, asynchronous
+from tornado.web import RequestHandler
 
 from operations.appitem_ops import AppItemOperation
 from operations.apprequest_ops import AppRequestItemOperation
@@ -55,16 +55,19 @@ class JikeNewsDataHandler(RequestHandler):
                 except:
                     params['summary'] = i['summary']
                 if len(params['summary']) <= 60:
-                    params['title'] = params['summary']
+                    params['article_title'] = params['summary']
             else:
                 params['summary'] = ''
-            params['detail_html'] = params['summary']
+            # params['detail_html'] = params['summary']
             if 'pictureUrl' in i and i['pictureUrl']:
                 for j in i['pictureUrl']:
                     params['detail_html'] += '<img src= %s />' % str(j)
             if 'link' in i and i['link']:
                 params['link'] = i['link']
-            ret, message = AppItemOperation().create_app_item(params)
+            else:
+                logging.warning('Drop item: no link to parse')
+            params['online_source_sid'] = 3733
+            ret, message = AppRequestItemOperation().create_jike_app_item(params)
             if not ret:
                 # logging.warning('params: ' + json.dumps(i))
                 logging.warning('Warning message: ' + message)

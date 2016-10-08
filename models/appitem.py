@@ -128,6 +128,32 @@ class AppRequestItem(object):
         self.running = False
         return self
 
+    def get_request_item_from_jike_param(self, param_dict):
+        self.fields = dict()
+        self.fields['title'] = param_dict['article_title']
+        self.fields['publish_site'] = param_dict['app_name']
+        self.fields['publish_time'] = str_from_timestamp(int(param_dict['published_date']) / 1000.0)
+        if 'author' in param_dict and param_dict['author']:
+            self.fields['author'] = param_dict['author']
+        if 'summary' in param_dict and param_dict['summary']:
+            self.fields['abstract'] = param_dict['summary']
+        self.insert = datetime.datetime.now()
+        self.channel_id = param_dict['channel_id']
+        # self.html = self._get_html(param_dict['article_title'], param_dict['detail_html'])
+        self.online_source_sid = param_dict['online_source_sid']
+        self.state = 2
+        # self.url = 'http://www.fakewandoujia.com/' + hashlib.md5(param_dict['detail_html']).hexdigest()
+        self.url = param_dict['link']
+        self.crawl_url = self.url
+        self.category = 1
+        self.cookies = {}
+        self.headers = {}
+        self.pagination = False
+        self.pages = []
+        self.proxy = 0
+        self.running = False
+        return self
+
     @staticmethod
     def _get_html(title, document):
         html = '''<html><head></head><body>\

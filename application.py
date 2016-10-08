@@ -18,8 +18,8 @@ class Application(tornado.web.Application):
         }
 
         handlers = [
-            (r'/news', NewsDataHandler),
-            # (r'/jike_news', JikeNewsDataHandler),
+            (r'/news$', NewsDataHandler),
+            (r'/jike_news$', JikeNewsDataHandler),
             # (r'/videos', VideoViewHandler),
         ]
         tornado.web.Application.__init__(self, handlers, **settings)
