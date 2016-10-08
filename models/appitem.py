@@ -140,8 +140,9 @@ class AppRequestItem(object):
         self.insert = datetime.datetime.now()
         self.channel_id = param_dict['channel_id']
         # self.html = self._get_html(param_dict['article_title'], param_dict['detail_html'])
+        self.html = ''
         self.online_source_sid = param_dict['online_source_sid']
-        self.state = 2
+        self.state = 0
         # self.url = 'http://www.fakewandoujia.com/' + hashlib.md5(param_dict['detail_html']).hexdigest()
         self.url = param_dict['link']
         self.crawl_url = self.url
