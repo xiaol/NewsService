@@ -66,6 +66,7 @@ class JikeNewsDataHandler(RequestHandler):
                 params['link'] = i['link']
             else:
                 logging.warning('Drop item: no link to parse')
+                continue
             params['online_source_sid'] = 3733
             params['channel_id'] = ObjectId("57ac392ada083a1c19957b1d")
             ret, message = AppRequestItemOperation().create_jike_app_item(params)
