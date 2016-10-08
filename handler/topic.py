@@ -59,9 +59,9 @@ class JikeNewsDataHandler(RequestHandler):
             else:
                 params['summary'] = ''
             # params['detail_html'] = params['summary']
-            if 'pictureUrl' in i and i['pictureUrl']:
-                for j in i['pictureUrl']:
-                    params['detail_html'] += '<img src= %s />' % str(j)
+            # if 'pictureUrl' in i and i['pictureUrl']:
+            #     for j in i['pictureUrl']:
+            #         params['detail_html'] += '<img src= %s />' % str(j)
             if 'link' in i and i['link']:
                 params['link'] = i['link']
             else:
