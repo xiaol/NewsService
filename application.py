@@ -4,10 +4,8 @@ import tornado.web
 import tornado.ioloop
 import tornado.httpserver
 import tornado.options
-from tornado.options import options
-from tornado.web import RequestHandler
 
-from handler.topic import NewsDataHandler, JikeNewsDataHandler, VideoViewHandler
+from handler.topic import NewsDataHandler, JikeNewsDataHandler, WeiboNewsDataHandler
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -20,6 +18,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r'/news$', NewsDataHandler),
             (r'/jike_news$', JikeNewsDataHandler),
+            (r'/weibo_news$', WeiboNewsDataHandler),
             # (r'/videos', VideoViewHandler),
         ]
         tornado.web.Application.__init__(self, handlers, **settings)

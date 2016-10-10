@@ -78,6 +78,21 @@ class JikeNewsDataHandler(RequestHandler):
         self.write(response)
 
 
+class WeiboNewsDataHandler(RequestHandler):
+
+    def post(self, *args, **kwargs):
+        item_list_json = self.get_argument('news_list')
+        item_list = json.loads(item_list_json)
+        db = get_mongodb()
+        for i in item_list:
+            weibo = db.weibo.find_one({'id': i['id']})
+            if weibo:
+                logging.warning('Drop item: already exists')
+                continue
+            db.weibo.insert(i)
+        self.write(response_success_json())
+
+
 class VideoViewHandler(RequestHandler):
     def get(self, *args, **kwargs):
         db = get_mongodb()
