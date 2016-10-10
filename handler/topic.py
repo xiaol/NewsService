@@ -85,7 +85,7 @@ class WeiboNewsDataHandler(RequestHandler):
         item_list = json.loads(item_list_json)
         db = get_mongodb()
         for i in item_list:
-            weibo = db.weibo.find_one({'id': i['id']})
+            weibo = db.weibo.find_one({'id': i['status']['id']})
             if weibo:
                 logging.warning('Drop item: already exists')
                 continue
