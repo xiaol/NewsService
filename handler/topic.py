@@ -89,6 +89,7 @@ class WeiboNewsDataHandler(RequestHandler):
             if weibo:
                 logging.warning('Drop item: already exists')
                 continue
+            i['id'] = i['status']['id']
             db.weibo.insert(i)
         self.write(response_success_json())
 
