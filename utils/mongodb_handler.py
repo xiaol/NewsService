@@ -31,10 +31,10 @@ class MongoDB(object):
     __instance = None
     __db_connection = None
 
-    def __new__(cls, *args, **kwargs):
-        if MongoDB.__instance is None:
-            MongoDB.__instance = object.__new__(cls, *args, **kwargs)
-        return MongoDB.__instance
+    # def __new__(cls, *args, **kwargs):
+    #     if MongoDB.__instance is None:
+    #         MongoDB.__instance = object.__new__(cls, *args, **kwargs)
+    #     return MongoDB.__instance
 
     def __init__(self, **kwargs):
         if 'host' not in kwargs or not kwargs['host']:

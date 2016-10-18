@@ -1,4 +1,4 @@
-Debug = False
+Debug = True
 
 if Debug:
     MONGODB_USER = 'ly'

@@ -9,7 +9,7 @@ from tornado.web import RequestHandler
 from operations.appitem_ops import AppItemOperation
 from operations.apprequest_ops import AppRequestItemOperation
 from utils.response_handler import response_fail_json, response_success_json
-from utils.utility import get_mongodb, extractor, change_text_txt
+from utils.utility import get_mongodb, get_mongodb246, extractor, change_text_txt
 
 
 class NewsDataHandler(RequestHandler):
@@ -83,7 +83,7 @@ class WeiboNewsDataHandler(RequestHandler):
     def post(self, *args, **kwargs):
         item_list_json = self.get_argument('news_list')
         item_list = json.loads(item_list_json)
-        db = get_mongodb()
+        db = get_mongodb246()
         for i in item_list:
             weibo = db.weibo.find_one({'id': i['status']['id']})
             if weibo:
