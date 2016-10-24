@@ -8,15 +8,17 @@ from utils.image import is_dirty_image
 from utils.mongodb_handler import MongoDB
 
 
-def get_mongodb():
-    return MongoDB().get_database()
-
 def get_mongodb246():
     params = dict()
     params['host'] = '120.27.162.246'
     params['user'] = 'spider'
     params['pwd'] = '@Mongo!%&Server@'
     return MongoDB(**params).get_database()
+
+
+def get_mongodb():
+    # return MongoDB().get_database()
+    return get_mongodb246()
 
 
 def news_verify(news):
