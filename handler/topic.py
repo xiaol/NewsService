@@ -119,7 +119,7 @@ class WeiboNewsDataHandler(RequestHandler):
             document['html'] = ''
             document['comment'] = {}
             document['fields'] = {}
-            document['category'] = None
+            document['category'] = 1
             document['use_mobile_ua'] = False
             document['use_random_ua'] = True
             document['insert'] = datetime.datetime.now()
