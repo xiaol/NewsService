@@ -2,14 +2,17 @@
 import logging
 import json
 import random
+import datetime
 from bson import ObjectId
 
+import requests
 from tornado.web import RequestHandler
 
 from operations.appitem_ops import AppItemOperation
 from operations.apprequest_ops import AppRequestItemOperation
 from utils.response_handler import response_fail_json, response_success_json
 from utils.utility import get_mongodb, get_mongodb246, extractor, change_text_txt
+from utils.cache import redis
 
 
 class NewsDataHandler(RequestHandler):
@@ -80,6 +83,8 @@ class JikeNewsDataHandler(RequestHandler):
 
 class WeiboNewsDataHandler(RequestHandler):
 
+    DOWNLOAD_KEY = "spiders:spiders:downloads"
+
     def post(self, *args, **kwargs):
         item_list_json = self.get_argument('news_list')
         item_list = json.loads(item_list_json)
@@ -92,7 +97,47 @@ class WeiboNewsDataHandler(RequestHandler):
             i['id'] = i['status']['id']
             i['procedure'] = 0
             db.weibo.insert(i)
+            if 'video' in i:
+                self._video_adapter(i)
+                continue
+            if 'mblogcards' in i and not i['mblogcards']:
+                continue
+            short_url = i['mblogcards'][0]['shortUrl']
+            r = requests.get(short_url)
+            url = r.url
+            document = dict()
+            document['site_id'] = ObjectId('583bc5155d272cd5c47a7668')
+            document['channel_id'] = ObjectId('583bc834fe8eca697abd5f9b')
+            document['headers'] = None
+            document['cookies'] = None
+            document['url'] = url
+            document['crawl_url'] = url
+            document['pagination'] = False
+            document['proxy'] = 0
+            document['pages'] = list()
+            document['online_source_sid'] = 4850
+            document['html'] = ''
+            document['comment'] = {}
+            document['fields'] = {}
+            document['category'] = None
+            document['use_mobile_ua'] = False
+            document['use_random_ua'] = True
+            document['insert'] = datetime.datetime.now()
+            document['upload'] = True
+            document['procedure'] = 0
+            try:
+                db = get_mongodb246()
+                db.v2_requests.insert(document)
+                redis.sadd(self.DOWNLOAD_KEY, str(document['_id']))
+            except Exception as e:
+                logging.warning('Error message: ' + e.message)
+            if '_id' in document:
+                print document['_id']
+
         self.write(response_success_json())
+
+    def _video_adapter(self, item):
+        pass
 
 
 class VideoViewHandler(RequestHandler):
