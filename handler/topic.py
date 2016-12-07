@@ -30,6 +30,7 @@ class NewsDataHandler(RequestHandler):
         args['online_source_sid'] = 3732
         ret, message = AppRequestItemOperation().create_app_item(args)
         if ret:
+            redis.sadd('spiders:spiders:parse', str(ret))
             response = response_success_json(ret_message=message)
         else:
             response = response_fail_json(ret_message=message)
@@ -39,6 +40,9 @@ class NewsDataHandler(RequestHandler):
 
 
 class JikeNewsDataHandler(RequestHandler):
+
+    DOWNLOAD_KEY = "spiders:spiders:downloads"
+
     def post(self, *args, **kwargs):
         # args = self.request.arguments
         item_list_json = self.get_argument('news_list')
@@ -76,6 +80,8 @@ class JikeNewsDataHandler(RequestHandler):
             if not ret:
                 # logging.warning('params: ' + json.dumps(i))
                 logging.warning('Warning message: ' + message)
+                continue
+            redis.sadd((self.DOWNLOAD_KEY, str(ret)))
 
         response = response_success_json()
         self.write(response)

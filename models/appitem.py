@@ -2,8 +2,8 @@
 import time
 import uuid
 import hashlib
-
 import datetime
+from bson import ObjectId
 
 from utils.utility import str_from_timestamp
 
@@ -101,10 +101,14 @@ class AppRequestItem(object):
 
     @staticmethod
     def get_table_name():
-        return 'requests'
+        return 'v2_requests'
+
+    def get_request_item_from_wandoujia_param(self, param_dict):
+        pass
 
     def get_request_item_from_param(self, param_dict):
         self.fields = dict()
+        self.site_id = ObjectId('57ac3802da083a1c19957b1b')
         self.fields['title'] = param_dict['article_title']
         self.fields['publish_site'] = param_dict['app_name']
         self.fields['publish_time'] = str_from_timestamp(int(param_dict['published_date'])/1000.0)
@@ -116,16 +120,19 @@ class AppRequestItem(object):
         self.channel_id = param_dict['channel_id']
         self.html = self._get_html(param_dict['article_title'], param_dict['detail_html'])
         self.online_source_sid = param_dict['online_source_sid']
-        self.state = 2
         self.url = 'http://www.fakewandoujia.com/' + hashlib.md5(param_dict['detail_html']).hexdigest()
         self.crawl_url = self.url
         self.category = 1
-        self.cookies = {}
-        self.headers = {}
+        self.use_mobile_ua = False
+        self.use_random_ua = True
+        self.cookies = None
+        self.headers = None
         self.pagination = False
         self.pages = []
         self.proxy = 0
-        self.running = False
+        self.procedure = 2000
+        self.comment = {}
+        self.upload = True
         return self
 
     def get_request_item_from_jike_param(self, param_dict):
@@ -142,7 +149,6 @@ class AppRequestItem(object):
         # self.html = self._get_html(param_dict['article_title'], param_dict['detail_html'])
         self.html = ''
         self.online_source_sid = param_dict['online_source_sid']
-        self.state = 0
         # self.url = 'http://www.fakewandoujia.com/' + hashlib.md5(param_dict['detail_html']).hexdigest()
         self.url = param_dict['link']
         self.crawl_url = self.url
@@ -152,7 +158,12 @@ class AppRequestItem(object):
         self.pagination = False
         self.pages = []
         self.proxy = 0
-        self.running = False
+        self.procedure = 0
+        self.comment = {}
+        self.upload = True
+        self.use_mobile_ua = False
+        self.use_random_ua = True
+        self.site_id = ObjectId('57ac3802da083a1c19957b1b')
         return self
 
     @staticmethod
