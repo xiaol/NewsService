@@ -81,7 +81,7 @@ class JikeNewsDataHandler(RequestHandler):
                 # logging.warning('params: ' + json.dumps(i))
                 logging.warning('Warning message: ' + message)
                 continue
-            redis.sadd((self.DOWNLOAD_KEY, str(ret)))
+            redis.sadd(self.DOWNLOAD_KEY, str(ret))
 
         response = response_success_json()
         self.write(response)
