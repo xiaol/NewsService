@@ -13,6 +13,7 @@ from operations.apprequest_ops import AppRequestItemOperation
 from utils.response_handler import response_fail_json, response_success_json
 from utils.utility import get_mongodb, get_mongodb246, extractor, change_text_txt
 from utils.cache import redis
+from utils.postgredb_handler import postgres
 
 
 class NewsDataHandler(RequestHandler):
@@ -104,6 +105,12 @@ class WeiboNewsDataHandler(RequestHandler):
             i['procedure'] = 0
             db.weibo.insert(i)
             if 'video' in i:
+                video_url = i['video']['streamUrl']
+                if i['video']['streamUrlHd']:
+                    video_url = i['video']['streamUrlHd']
+                if not video_url and not video_url.startswith('http://gslb.miaopai.com'):
+                    continue
+                i['video_url'] = video_url
                 self._video_adapter(i)
                 continue
             if 'mblogcards' in i and not i['mblogcards']:
@@ -143,7 +150,44 @@ class WeiboNewsDataHandler(RequestHandler):
         self.write(response_success_json())
 
     def _video_adapter(self, item):
-        pass
+        srid = 4850
+        chid = 35
+        title = item['status']['blogContent']
+        ctime = self.format_time()
+        f = '%a %b %d %H:%M:%S +0800 %Y'
+        ptime = datetime.strptime(item['status']['createDate'], f)
+        docid = item['video']['h5Url']
+        content = [{'txt': '秒拍视频'}]
+        html = '<html></html>'
+        pname = '秒拍视频'
+        purl = None
+
+        sql = '''
+            INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime)
+        '''
+        conn = postgres.pool.getconn()
+        cur = conn.cursor()
+        try:
+            cur.execute(sql, (pname, docid, title, item['video_url'], docid, content, html, ptime, chid, srid, ctime))
+            conn.commit()
+        except Exception, e:
+            conn.rollback()
+        finally:
+            postgres.pool.putconn(conn)
+
+    @staticmethod
+    def format_time(t=None):
+        f = "%Y-%m-%d %H:%M:%S"
+        result = None
+        if t is None:
+            return datetime.now()
+        try:
+            result = datetime.strptime(t, f)
+        except Exception:
+            pass
+        if result is None:
+            result = datetime.now()
+        return result
 
 
 class VideoViewHandler(RequestHandler):

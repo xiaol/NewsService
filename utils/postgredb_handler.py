@@ -2,6 +2,7 @@
 from datetime import datetime
 
 import psycopg2
+from psycopg2 import pool
 
 from settings import *
 from utils.utility import get_mongodb
@@ -62,6 +63,64 @@ def get_spider_source_max_id():
     conn.close()
     return rows[0][0]
 
+
+class Postgres(object):
+
+    db_name = "BDP"
+    db_user = "postgres"
+    db_host = "120.27.163.25"
+    db_password = "ly@postgres&2015"
+    min_connections = 1
+    max_connections = 5
+
+    def __init__(self):
+        self.pool = pool.SimpleConnectionPool(
+            minconn=self.min_connections,
+            maxconn=self.max_connections,
+            database=self.db_name,
+            user=self.db_user,
+            host=self.db_host,
+            password=self.db_password,
+        )
+
+    def run(self, sql):
+        pass
+
+    def query(self, sql):
+        connection = self.pool.getconn()
+        rows = list()
+        try:
+            cursor = connection.cursor()
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+        except Exception, e:
+            connection.rollback()
+            print e
+        finally:
+            self.pool.putconn(connection)
+        return rows
+
+    def insert(self, sql):
+        connection = self.pool.getconn()
+        ret = False
+        try:
+            cursor = connection.cursor()
+            cursor.execute(sql)
+            connection.commit()
+            ret = True
+        except Exception, e:
+            connection.rollback()
+            print e
+        finally:
+            self.pool.putconn(connection)
+            return ret
+
+    def get_cur(self):
+        connection = self.pool.getconn()
+        cur = connection.cursor()
+        return connection, cur
+
+postgres = Postgres()
 
 # print get_spider_source_max_id()
 # print get_source_name()
