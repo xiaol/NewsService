@@ -7,6 +7,7 @@ from bson import ObjectId
 
 import requests
 from tornado.web import RequestHandler
+from psycopg2.extras import Json
 
 from operations.appitem_ops import AppItemOperation
 from operations.apprequest_ops import AppRequestItemOperation
@@ -111,6 +112,7 @@ class WeiboNewsDataHandler(RequestHandler):
                 if not video_url and not video_url.startswith('http://gslb.miaopai.com'):
                     continue
                 i['video_url'] = video_url
+                print i['video_url']
                 self._video_adapter(i)
                 continue
             if 'mblogcards' in i and not i['mblogcards']:
@@ -155,38 +157,39 @@ class WeiboNewsDataHandler(RequestHandler):
         title = item['status']['blogContent']
         ctime = self.format_time()
         f = '%a %b %d %H:%M:%S +0800 %Y'
-        ptime = datetime.strptime(item['status']['createDate'], f)
+        ptime = datetime.datetime.strptime(item['status']['createDate'], f)
         docid = item['video']['h5Url']
         content = [{'txt': '秒拍视频'}]
         html = '<html></html>'
         pname = '秒拍视频'
         purl = None
 
-        sql = '''
-            INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime)
-        '''
+        sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime)
+                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
         conn = postgres.pool.getconn()
         cur = conn.cursor()
-        try:
-            cur.execute(sql, (pname, docid, title, item['video_url'], docid, content, html, ptime, chid, srid, ctime))
-            conn.commit()
-        except Exception, e:
-            conn.rollback()
-        finally:
-            postgres.pool.putconn(conn)
+        # try:
+
+        cur.execute(sql, (pname, docid, title, item['video_url'], docid, Json(content), html, ptime, chid, srid, ctime))
+        conn.commit()
+        # except Exception, e:
+        #     print e
+        #     conn.rollback()
+        # finally:
+        postgres.pool.putconn(conn)
 
     @staticmethod
     def format_time(t=None):
         f = "%Y-%m-%d %H:%M:%S"
         result = None
         if t is None:
-            return datetime.now()
+            return datetime.datetime.now()
         try:
-            result = datetime.strptime(t, f)
+            result = datetime.datetime.strptime(t, f)
         except Exception:
             pass
         if result is None:
-            result = datetime.now()
+            result = datetime.datetime.now()
         return result
 
 
