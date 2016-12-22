@@ -109,7 +109,7 @@ class WeiboNewsDataHandler(RequestHandler):
                 video_url = i['video']['streamUrl']
                 if i['video']['streamUrlHd']:
                     video_url = i['video']['streamUrlHd']
-                if not video_url and not video_url.startswith('http://gslb.miaopai.com'):
+                if not video_url or not video_url.startswith('http://gslb.miaopai.com'):
                     continue
                 i['video_url'] = video_url
                 print i['video_url']
