@@ -172,7 +172,7 @@ class WeiboNewsDataHandler(RequestHandler):
             cur.execute(sql, (pname, docid, title, item['video_url'], docid, Json(content), html, ptime, chid, srid, ctime, thumbnail))
             conn.commit()
         except Exception, e:
-            print e
+            logging.warning('Database error: ' + e.message)
             conn.rollback()
         finally:
             postgres.pool.putconn(conn)
