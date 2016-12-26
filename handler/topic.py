@@ -162,7 +162,7 @@ class WeiboNewsDataHandler(RequestHandler):
         content = [{'txt': '秒拍视频'}]
         html = '<html></html>'
         pname = '秒拍视频'
-        thumbnail = item['video']['']
+        thumbnail = item['video']['pagePic']
 
         sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime, thumbnail)
                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
