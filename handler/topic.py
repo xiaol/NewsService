@@ -162,21 +162,20 @@ class WeiboNewsDataHandler(RequestHandler):
         content = [{'txt': '秒拍视频'}]
         html = '<html></html>'
         pname = '秒拍视频'
-        purl = None
+        thumbnail = item['video']['']
 
-        sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime)
-                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
+        sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime, thumbnail)
+                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
         conn = postgres.pool.getconn()
         cur = conn.cursor()
-        # try:
-
-        cur.execute(sql, (pname, docid, title, item['video_url'], docid, Json(content), html, ptime, chid, srid, ctime))
-        conn.commit()
-        # except Exception, e:
-        #     print e
-        #     conn.rollback()
-        # finally:
-        postgres.pool.putconn(conn)
+        try:
+            cur.execute(sql, (pname, docid, title, item['video_url'], docid, Json(content), html, ptime, chid, srid, ctime, thumbnail))
+            conn.commit()
+        except Exception, e:
+            print e
+            conn.rollback()
+        finally:
+            postgres.pool.putconn(conn)
 
     @staticmethod
     def format_time(t=None):
