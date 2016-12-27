@@ -164,12 +164,12 @@ class WeiboNewsDataHandler(RequestHandler):
         pname = '秒拍视频'
         thumbnail = item['video']['pagePic']
 
-        sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime, thumbnail)
-                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
+        sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime, thumbnail, style)
+                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
         conn = postgres.pool.getconn()
         cur = conn.cursor()
         try:
-            cur.execute(sql, (pname, docid, title, item['video_url'], docid, Json(content), html, ptime, chid, srid, ctime, thumbnail))
+            cur.execute(sql, (pname, docid, title, item['video_url'], docid, Json(content), html, ptime, chid, srid, ctime, thumbnail, 6))
             conn.commit()
         except Exception, e:
             logging.warning('Database error: ' + e.message)
