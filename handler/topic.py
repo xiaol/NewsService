@@ -165,13 +165,24 @@ class WeiboNewsDataHandler(RequestHandler):
         thumbnail = item['video']['pagePic']
         duration = item['video'].get('duration', 0)
         duration = int(duration)
+        icon = 'https://oss-cn-hangzhou.aliyuncs.com/bdp-images/35731635d18811e6bfb780e65007a6da.jpg'
 
-        sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime, thumbnail, style, duration)
-                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'''
+        sql = '''INSERT INTO newslist_v2 (pname, url, title, videourl, docid,
+        content, html, ptime, chid, srid,
+        ctime, thumbnail, style, duration, rtype,
+        icon)
+                  VALUES (%s, %s, %s, %s, %s,
+                  %s, %s, %s, %s, %s,
+                  %s, %s, %s, %s, %s,
+                  %s);'''
         conn = postgres.pool.getconn()
         cur = conn.cursor()
         try:
-            cur.execute(sql, (pname, docid, title, item['video_url'], docid, Json(content), html, ptime, chid, srid, ctime, thumbnail, 6, duration))
+            cur.execute(sql,
+                        (pname, docid, title, item['video_url'], docid,
+                         Json(content), html, ptime, chid, srid,
+                         ctime, thumbnail, 6, duration, 6,
+                         icon))
             conn.commit()
         except Exception, e:
             logging.warning('Database error: ' + e.message)
