@@ -161,7 +161,7 @@ class WeiboNewsDataHandler(RequestHandler):
         docid = item['video']['h5Url']
         content = [{'txt': '秒拍视频'}]
         html = '<html></html>'
-        pname = '秒拍视频'
+        pname = '微博热点'
         thumbnail = item['video']['pagePic']
 
         sql = '''INSERT INTO videolist (pname, url, title, videourl, docid, content, html, ptime, chid, srid, ctime, thumbnail, style)
