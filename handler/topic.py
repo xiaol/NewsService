@@ -174,7 +174,7 @@ class WeiboNewsDataHandler(RequestHandler):
                   VALUES (%s, %s, %s, %s, %s,
                   %s, %s, %s, %s, %s,
                   %s, %s, %s, %s, %s,
-                  %s);'''
+                  %s) returning nid;'''
         conn = postgres.pool.getconn()
         cur = conn.cursor()
         try:
@@ -184,11 +184,43 @@ class WeiboNewsDataHandler(RequestHandler):
                          ctime, thumbnail, 6, duration, 6,
                          icon))
             conn.commit()
+            flag = True
+            nid = cur.fetchone()[0]
         except Exception, e:
+            logging.warning('Database error: ' + e.message)
+            conn.rollback()
+            flag = False
+        finally:
+            postgres.pool.putconn(conn)
+        if flag:
+            self._related_videos(item, nid)
+
+    @staticmethod
+    def _related_videos(nid):
+        base_url = 'http://deeporiginalx.com/news.html?type=0&nid=%s'
+        sql = '''
+        SELECT ctime, title, pname, ptime, nid, duration from newslist_v2 where rtype=6 limit 50;
+        '''
+        ret = postgres.query(sql)
+        choice_list = random.sample(ret, 5)
+        conn = postgres.pool.getconn()
+        cur = conn.cursor()
+        try:
+            for i in choice_list:
+                i_sql = '''
+              INSERT INTO asearchlist_v2 (ctime, refer, url, title, "from", rank, ptime, pname, nid, duration)
+              VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+              '''
+
+                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5]))
+            conn.commit()
+        except Exception as e:
+            print e
             logging.warning('Database error: ' + e.message)
             conn.rollback()
         finally:
             postgres.pool.putconn(conn)
+
 
     @staticmethod
     def format_time(t=None):
