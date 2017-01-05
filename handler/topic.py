@@ -193,7 +193,7 @@ class WeiboNewsDataHandler(RequestHandler):
         finally:
             postgres.pool.putconn(conn)
         if flag:
-            self._related_videos(item, nid)
+            self._related_videos(nid)
 
     @staticmethod
     def _related_videos(nid):
