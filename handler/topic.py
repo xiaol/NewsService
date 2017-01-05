@@ -199,7 +199,7 @@ class WeiboNewsDataHandler(RequestHandler):
     def _related_videos(nid):
         base_url = 'http://deeporiginalx.com/news.html?type=0&nid=%s'
         sql = '''
-        SELECT ctime, title, pname, ptime, nid, duration from newslist_v2 where rtype=6 limit 50;
+        SELECT ctime, title, pname, ptime, nid, duration, thumbnail from newslist_v2 where rtype=6 limit 50;
         '''
         ret = postgres.query(sql)
         choice_list = random.sample(ret, 5)
@@ -208,11 +208,11 @@ class WeiboNewsDataHandler(RequestHandler):
         try:
             for i in choice_list:
                 i_sql = '''
-              INSERT INTO asearchlist_v2 (ctime, refer, url, title, "from", rank, ptime, pname, nid, duration)
+              INSERT INTO asearchlist_v2 (ctime, refer, url, title, "from", rank, ptime, pname, nid, duration, img)
               VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
               '''
 
-                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5]))
+                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5]), i[6])
             conn.commit()
         except Exception as e:
             print e
