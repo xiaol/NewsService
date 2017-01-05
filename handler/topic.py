@@ -212,7 +212,7 @@ class WeiboNewsDataHandler(RequestHandler):
               VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
               '''
 
-                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5]), i[6])
+                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5], i[6],))
             conn.commit()
         except Exception as e:
             print e
