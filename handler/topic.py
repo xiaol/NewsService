@@ -132,7 +132,11 @@ class WeiboNewsDataHandler(RequestHandler):
             document['pages'] = list()
             document['online_source_sid'] = 4850
             document['html'] = ''
-            document['comment'] = {}
+            document['comment'] = {
+                    "user_id":i['status']['userId'],
+                    "weibo_id":i['status']['id'],
+                    "comment_count":i['status']['commentCount']
+            }
             document['fields'] = {}
             document['category'] = 1
             document['use_mobile_ua'] = False
