@@ -118,7 +118,7 @@ class WeiboNewsDataHandler(RequestHandler):
             if 'mblogcards' in i and not i['mblogcards']:
                 continue
             short_url = i['mblogcards'][0]['shortUrl']
-            r = requests.get(short_url)
+            r = requests.get(short_url, timeout=15)
             url = r.url
             document = dict()
             document['site_id'] = ObjectId('583bc5155d272cd5c47a7668')
