@@ -33,10 +33,11 @@ class NewsDataHandler(RequestHandler):
         ret, message = AppRequestItemOperation().create_app_item(args)
         if ret:
             redis.sadd('spiders:spiders:parse', str(ret))
+            logging.warning('Insert item success: wandoujia')
             response = response_success_json(ret_message=message)
         else:
             response = response_fail_json(ret_message=message)
-            logging.warning(response)
+            # logging.warning(response)
             # logging.warning('params: ' + json.dumps(args))
         self.write(response)
 
@@ -74,15 +75,16 @@ class JikeNewsDataHandler(RequestHandler):
             if 'link' in i and i['link']:
                 params['link'] = i['link']
             else:
-                logging.warning('Drop item: no link to parse')
                 continue
             params['online_source_sid'] = 3733
             params['channel_id'] = ObjectId("57ac392ada083a1c19957b1d")
             ret, message = AppRequestItemOperation().create_jike_app_item(params)
             if not ret:
                 # logging.warning('params: ' + json.dumps(i))
-                logging.warning('Warning message: ' + message)
+                # logging.warning('Warning message: ' + message)
                 continue
+            logging.warning('Insert news success: jike')
+
             redis.sadd(self.DOWNLOAD_KEY, str(ret))
 
         response = response_success_json()
@@ -100,7 +102,7 @@ class WeiboNewsDataHandler(RequestHandler):
         for i in item_list:
             weibo = db.weibo.find_one({'id': i['status']['id']})
             if weibo:
-                logging.warning('Drop item: already exists')
+                # logging.warning('Drop item: already exists')
                 continue
             i['id'] = i['status']['id']
             i['procedure'] = 0
@@ -196,6 +198,8 @@ class WeiboNewsDataHandler(RequestHandler):
             flag = False
         finally:
             postgres.pool.putconn(conn)
+            logging.warning('Success insert item: video')
+
         if flag:
             self._related_videos(nid)
 
