@@ -135,7 +135,7 @@ class WeiboNewsDataHandler(RequestHandler):
             document['comment'] = {
                     "user_id":i['status']['userId'],
                     "weibo_id":i['status']['id'],
-                    "comment_count":i['status']['commentCount']
+                    "comment_count":i['status']['commentsCount']
             }
             document['fields'] = {}
             document['category'] = 1
