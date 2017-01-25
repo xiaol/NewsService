@@ -102,7 +102,7 @@ class WeiboNewsDataHandler(RequestHandler):
         for i in item_list:
             weibo = db.weibo.find_one({'id': i['status']['id']})
             if weibo:
-                # logging.warning('Drop item: already exists')
+                logging.warning('Drop item: already exists')
                 continue
             i['id'] = i['status']['id']
             i['procedure'] = 0
@@ -135,9 +135,9 @@ class WeiboNewsDataHandler(RequestHandler):
             document['online_source_sid'] = 4850
             document['html'] = ''
             document['comment'] = {
-                    "user_id":i['status']['userId'],
-                    "weibo_id":i['status']['id'],
-                    "comment_count":i['status']['commentsCount']
+                    # "user_id":i['status']['userId'],
+                    # "weibo_id":i['status']['id'],
+                    # "comment_count":i['status']['commentsCount']
             }
             document['fields'] = {}
             document['category'] = 1
@@ -150,6 +150,8 @@ class WeiboNewsDataHandler(RequestHandler):
                 db = get_mongodb246()
                 db.v2_requests.insert(document)
                 redis.sadd(self.DOWNLOAD_KEY, str(document['_id']))
+                logging.warning('Insert item success : weibo')
+
             except Exception as e:
                 logging.warning('Error message: ' + e.message)
             if '_id' in document:
