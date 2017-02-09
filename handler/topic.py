@@ -171,6 +171,8 @@ class WeiboNewsDataHandler(RequestHandler):
         html = '<html></html>'
         pname = '微博热点'
         thumbnail = item['video']['pagePic']
+        if not thumbnail.startswith('http'):
+            thumbnail = ''
         duration = item['video'].get('duration', 0)
         duration = int(duration)
         icon = 'https://oss-cn-hangzhou.aliyuncs.com/bdp-images/35731635d18811e6bfb780e65007a6da.jpg'
