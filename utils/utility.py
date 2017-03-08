@@ -10,7 +10,7 @@ from utils.mongodb_handler import MongoDB
 
 def get_mongodb246():
     params = dict()
-    params['host'] = '120.27.162.246'
+    params['host'] = '10.47.54.77'
     params['user'] = 'spider'
     params['pwd'] = '@Mongo!%&Server@'
     return MongoDB(**params).get_database()
