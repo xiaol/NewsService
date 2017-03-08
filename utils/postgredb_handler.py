@@ -68,7 +68,7 @@ class Postgres(object):
 
     db_name = "BDP"
     db_user = "postgres"
-    db_host = "120.27.163.25"
+    db_host = "10.47.54.175"
     db_password = "ly@postgres&2015"
     min_connections = 1
     max_connections = 5
