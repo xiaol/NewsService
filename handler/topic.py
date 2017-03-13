@@ -13,7 +13,7 @@ from operations.appitem_ops import AppItemOperation
 from operations.apprequest_ops import AppRequestItemOperation
 from utils.response_handler import response_fail_json, response_success_json
 from utils.utility import get_mongodb, get_mongodb246, extractor, change_text_txt
-from utils.cache import redis
+from utils.cache import redis_v2
 from utils.postgredb_handler import postgres
 
 
@@ -32,7 +32,7 @@ class NewsDataHandler(RequestHandler):
         args['online_source_sid'] = 3732
         ret, message = AppRequestItemOperation().create_app_item(args)
         if ret:
-            redis.sadd('spiders:spiders:parse', str(ret))
+            redis_v2.sadd('spiders:spiders:parse', str(ret))
             logging.warning('Insert item success: wandoujia')
             response = response_success_json(ret_message=message)
         else:
@@ -85,7 +85,7 @@ class JikeNewsDataHandler(RequestHandler):
                 continue
             logging.warning('Insert news success: jike')
 
-            redis.sadd(self.DOWNLOAD_KEY, str(ret))
+            redis_v2.sadd(self.DOWNLOAD_KEY, str(ret))
 
         response = response_success_json()
         self.write(response)
@@ -149,7 +149,7 @@ class WeiboNewsDataHandler(RequestHandler):
             try:
                 db = get_mongodb246()
                 db.v2_requests.insert(document)
-                redis.sadd(self.DOWNLOAD_KEY, str(document['_id']))
+                redis_v2.sadd(self.DOWNLOAD_KEY, str(document['_id']))
                 logging.warning('Insert item success : weibo')
 
             except Exception as e:

@@ -25,6 +25,7 @@ elif not Debug:
     POSTGRES = "postgresql://postgres:ly@postgres&2015@120.27.163.25/BDP"
 
 REDIS_URL = 'redis://ccd827d637514872:LYcache2015@ccd827d637514872.m.cnhza.kvstore.aliyuncs.com:6379'
+REDIS_URL_V2 = 'redis://114.55.104.222:6379'
 NEWS_STORE_API = "http://api.deeporiginalx.com/bdp/spider/pipeline/task/{key}"
 NEWS_STORE_API_V2 = 'http://bdp.deeporiginalx.com/v2/sps/ns/{key}'
 

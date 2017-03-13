@@ -4,6 +4,7 @@
 
 from redis import from_url
 from settings import REDIS_URL
+from settings import REDIS_URL_V2
 
 __author__ = "Sven Lee"
 __copyright__ = "Copyright 2016-2019, ShangHai Lie Ying"
@@ -15,3 +16,4 @@ __date__ = "2016-07-27 14:15"
 
 
 redis = from_url(REDIS_URL, max_connections=30)
+redis_v2 = from_url(REDIS_URL_V2, max_connections=30)
