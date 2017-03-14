@@ -16,4 +16,4 @@ __date__ = "2016-07-27 14:15"
 
 
 redis = from_url(REDIS_URL, max_connections=30)
-redis_v2 = from_url(REDIS_URL_V2, max_connections=30)
+redis_v2 = from_url(REDIS_URL_V2, db=2, max_connections=30)
