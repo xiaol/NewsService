@@ -222,11 +222,11 @@ class WeiboNewsDataHandler(RequestHandler):
         try:
             for i in choice_list:
                 i_sql = '''
-              INSERT INTO asearchlist_v2 (ctime, refer, url, title, "from", rank, ptime, pname, nid, duration, img)
-              VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+              INSERT INTO asearchlist_v2 (ctime, refer, url, title, "from", rank, ptime, pname, nid, duration, img, rtype)
+              VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
               '''
 
-                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5], i[6],))
+                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5], i[6], 6))
             conn.commit()
         except Exception as e:
             print e
