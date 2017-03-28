@@ -176,7 +176,9 @@ class WeiboNewsDataHandler(RequestHandler):
         duration = item['video'].get('duration', 0)
         duration = int(duration)
         icon = 'https://oss-cn-hangzhou.aliyuncs.com/bdp-images/35731635d18811e6bfb780e65007a6da.jpg'
-
+        if 'avatarHd' in item['status']:
+            icon = item['status']['avatarHd']
+            pname = item['status']['userName']
         sql = '''INSERT INTO newslist_v2 (pname, url, title, videourl, docid,
         content, html, ptime, chid, srid,
         ctime, thumbnail, style, duration, rtype,
