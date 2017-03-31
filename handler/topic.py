@@ -175,17 +175,18 @@ class WeiboNewsDataHandler(RequestHandler):
             thumbnail = ''
         duration = item['video'].get('duration', 0)
         duration = int(duration)
+        click_times = item['video'].get('onlineUsersNumber', 0)
         icon = 'https://oss-cn-hangzhou.aliyuncs.com/bdp-images/35731635d18811e6bfb780e65007a6da.jpg'
         if 'avatarHd' in item['status']:
             icon = item['status']['avatarHd']
             pname = item['status']['userName']
         sql = '''INSERT INTO newslist_v2 (pname, url, title, videourl, docid,
         content, html, ptime, chid, srid,
-        ctime, thumbnail, style, duration, rtype,
+        ctime, thumbnail, style, duration, rtype, clicktimes,
         icon)
                   VALUES (%s, %s, %s, %s, %s,
                   %s, %s, %s, %s, %s,
-                  %s, %s, %s, %s, %s,
+                  %s, %s, %s, %s, %s, %s,
                   %s) returning nid;'''
         conn = postgres.pool.getconn()
         cur = conn.cursor()
@@ -193,7 +194,7 @@ class WeiboNewsDataHandler(RequestHandler):
             cur.execute(sql,
                         (pname, docid, title, item['video_url'], docid,
                          Json(content), html, ptime, chid, srid,
-                         ctime, thumbnail, 6, duration, 6,
+                         ctime, thumbnail, 6, duration, 6, click_times,
                          icon))
             conn.commit()
             flag = True
