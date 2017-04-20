@@ -214,7 +214,7 @@ class WeiboNewsDataHandler(RequestHandler):
     def _related_videos(nid):
         base_url = 'http://deeporiginalx.com/news.html?type=0&nid=%s'
         sql = '''
-        SELECT ctime, title, pname, ptime, nid, duration, thumbnail from newslist_v2 where rtype=6 limit 50;
+        SELECT ctime, title, pname, ptime, nid, duration, thumbnail from newslist_v2 where rtype=6 ORDER BY nid DESC limit 50;
         '''
         ret = postgres.query(sql)
         choice_list = random.sample(ret, 5)
