@@ -7,14 +7,11 @@ from bson import ObjectId
 
 import requests
 from tornado.web import RequestHandler
-from psycopg2.extras import Json
 
-from operations.appitem_ops import AppItemOperation
 from operations.apprequest_ops import AppRequestItemOperation
 from utils.response_handler import response_fail_json, response_success_json
 from utils.utility import get_mongodb, get_mongodb246, extractor, change_text_txt
 from utils.cache import redis_v2
-from utils.postgredb_handler import postgres
 
 
 class NewsDataHandler(RequestHandler):
@@ -160,81 +157,60 @@ class WeiboNewsDataHandler(RequestHandler):
         self.write(response_success_json())
 
     def _video_adapter(self, item):
-        srid = 4850
-        chid = 35
-        title = item['status']['blogContent']
-        ctime = self.format_time()
-        f = '%a %b %d %H:%M:%S +0800 %Y'
-        ptime = datetime.datetime.strptime(item['status']['createDate'], f)
-        docid = item['video']['h5Url']
-        content = [{'txt': '秒拍视频'}]
-        html = '<html></html>'
-        pname = '微博热点'
-        thumbnail = item['video']['pagePic']
-        if not thumbnail.startswith('http'):
-            thumbnail = ''
-        duration = item['video'].get('duration', 0)
-        duration = int(duration)
-        click_times = item['video'].get('onlineUsersNumber', 0)
-        icon = 'https://oss-cn-hangzhou.aliyuncs.com/bdp-images/35731635d18811e6bfb780e65007a6da.jpg'
+        UPLOAD = "http://10.25.60.218:8081/api/store/video"
+        f = "%a %b %d %H:%M:%S +0800 %Y"
+        ptime = datetime.datetime.strptime(item["status"]["createDate"], f)
+        thumbnail = item["video"]["pagePic"]
+        if not thumbnail.startswith("http"):
+            return
+        duration = int(item["video"].get("duration", 0))
+        click_times = item["video"].get("onlineUsersNumber", 0)
+        pname = u"微博热点"
+        icon = "https://oss-cn-hangzhou.aliyuncs.com/bdp-images/35731635d18811e6bfb780e65007a6da.jpg"
         if 'avatarHd' in item['status']:
             icon = item['status']['avatarHd']
             pname = item['status']['userName']
-        sql = '''INSERT INTO newslist_v2 (pname, url, title, videourl, docid,
-        content, html, ptime, chid, srid,
-        ctime, thumbnail, style, duration, rtype, clicktimes,
-        icon)
-                  VALUES (%s, %s, %s, %s, %s,
-                  %s, %s, %s, %s, %s,
-                  %s, %s, %s, %s, %s, %s,
-                  %s) returning nid;'''
-        conn = postgres.pool.getconn()
-        cur = conn.cursor()
+        data = {
+            "title": item['status']['blogContent'],
+            "unique_id": item['video']['h5Url'],
+            "publish_url": item['video']['h5Url'],
+            "publish_site": pname,
+            "publish_time": ptime.isoformat()[:-7]+"Z",
+            "insert_time": self.format_time().isoformat()[:-7]+"Z",
+            "author": "",
+            "author_icon": "",
+            "site_icon": icon,
+            "channel_id": 35,
+            "second_channel_id": 0,
+            "source_id": 4850,
+            "online": True,
+            "video_url": item['video_url'],
+            "video_thumbnail": thumbnail,
+            "video_duration": duration,
+            "play_times": click_times,
+        }
         try:
-            cur.execute(sql,
-                        (pname, docid, title, item['video_url'], docid,
-                         Json(content), html, ptime, chid, srid,
-                         ctime, thumbnail, 6, duration, 6, click_times,
-                         icon))
-            conn.commit()
-            flag = True
-            nid = cur.fetchone()[0]
-        except Exception, e:
-            logging.warning('Database error: ' + e.message)
-            conn.rollback()
-            flag = False
-        finally:
-            postgres.pool.putconn(conn)
-            logging.warning('Success insert item: video')
-
-        if flag:
-            self._related_videos(nid)
+            r = requests.post(UPLOAD, json=data, timeout=(5, 10))
+        except Exception as e:
+            logging.warning(e.message)
+        else:
+            if r.status_code == 200:
+                result = r.json()
+                logging.info("Store video: %s" % json.dumps(result))
+                self.store_relate_videos(result["id"])
+            else:
+                logging.info("status code: %s" % r.status_code)
 
     @staticmethod
-    def _related_videos(nid):
-        base_url = 'http://deeporiginalx.com/news.html?type=0&nid=%s'
-        sql = '''
-        SELECT ctime, title, pname, ptime, nid, duration, thumbnail from newslist_v2 where rtype=6 ORDER BY nid DESC limit 50;
-        '''
-        ret = postgres.query(sql)
-        choice_list = random.sample(ret, 5)
-        conn = postgres.pool.getconn()
-        cur = conn.cursor()
+    def store_relate_videos(nid):
+        url = "http://10.25.60.218:8081/search/relate/video"
         try:
-            for i in choice_list:
-                i_sql = '''
-              INSERT INTO asearchlist_v2 (ctime, refer, url, title, "from", rank, ptime, pname, nid, duration, img, rtype)
-              VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-              '''
-
-                cur.execute(i_sql, (i[0], str(nid), base_url%i[4], i[1], 'Qidian', 1, i[3], i[2], i[4], i[5], i[6], 6))
-            conn.commit()
+            r = requests.post(url, data={"id": nid}, timeout=(5, 10))
         except Exception as e:
-            print e
-            logging.warning('Database error: ' + e.message)
-            conn.rollback()
-        finally:
-            postgres.pool.putconn(conn)
+            logging.warning(e.message)
+        else:
+            if r.status_code == 200:
+                logging.info("%s relate videos for %d" % (len(r.json()), nid))
 
 
     @staticmethod
