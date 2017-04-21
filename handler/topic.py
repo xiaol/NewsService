@@ -167,7 +167,7 @@ class WeiboNewsDataHandler(RequestHandler):
         if not thumbnail.startswith("http"):
             return
         duration = int(item["video"].get("duration", 0))
-        click_times = item["video"].get("onlineUsersNumber", 0)
+        click_times = int(item["video"].get("onlineUsersNumber", 0))
         pname = u"微博热点"
         icon = "https://oss-cn-hangzhou.aliyuncs.com/bdp-images/35731635d18811e6bfb780e65007a6da.jpg"
         if 'avatarHd' in item['status']:
