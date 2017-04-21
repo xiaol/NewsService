@@ -112,7 +112,10 @@ class WeiboNewsDataHandler(RequestHandler):
                     continue
                 i['video_url'] = video_url
                 print i['video_url']
-                self._video_adapter(i)
+                try:
+                    self._video_adapter(i)
+                except Exception as e:
+                    logging.error(e.message)
                 continue
             if 'mblogcards' in i and not i['mblogcards']:
                 continue
