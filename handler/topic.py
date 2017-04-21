@@ -178,7 +178,7 @@ class WeiboNewsDataHandler(RequestHandler):
             "unique_id": item['video']['h5Url'],
             "publish_url": item['video']['h5Url'],
             "publish_site": pname,
-            "publish_time": ptime.isoformat()[:-7]+"Z",
+            "publish_time": ptime.isoformat()+"Z",
             "insert_time": self.format_time().isoformat()[:-7]+"Z",
             "author": "",
             "author_icon": "",
