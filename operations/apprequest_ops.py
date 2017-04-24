@@ -5,6 +5,9 @@ from models.appitem import AppRequestItem
 
 
 class AppRequestItemOperation(Operations):
+
+    ban_list = ['Pinkoi', '别致', '豆瓣东西', '约瑟的粮仓', '设计本装修']
+
     def __init__(self):
         super(AppRequestItemOperation, self).__init__(AppRequestItem.get_table_name())
 
@@ -13,6 +16,8 @@ class AppRequestItemOperation(Operations):
         if not flag:
             return False, 'Param "%s" is required.' % key
         appitem = AppRequestItem().get_request_item_from_param(appitem_param)
+        if appitem.fields['publish_site'] in self.ban_list:
+            return False, 'News in ban list.'
         exist = self.verify_item_exists(appitem.url)
         if exist:
             return False, 'Already exist in database.'
